@@ -26,11 +26,23 @@ function MapController({
   const map = useMap();
 
   useEffect(() => {
-    if (selectedLead && selectedLead.latitude && selectedLead.longitude) {
+    if (
+      selectedLead &&
+      typeof selectedLead.latitude === 'number' &&
+      !isNaN(selectedLead.latitude) &&
+      typeof selectedLead.longitude === 'number' &&
+      !isNaN(selectedLead.longitude)
+    ) {
       map.flyTo([selectedLead.latitude, selectedLead.longitude], 16, {
         duration: 1.0,
       });
-    } else if (center) {
+    } else if (
+      center &&
+      typeof center[0] === 'number' &&
+      !isNaN(center[0]) &&
+      typeof center[1] === 'number' &&
+      !isNaN(center[1])
+    ) {
       map.flyTo(center, 13, { duration: 1.0 });
     }
   }, [selectedLead, center, map]);
@@ -47,18 +59,33 @@ export default function InteractiveMap({
   searchRadius = 5000,
 }: InteractiveMapProps) {
   const validLeads = useMemo(
-    () => leads.filter((l) => l.latitude !== null && l.longitude !== null),
+    () =>
+      leads.filter(
+        (l) =>
+          typeof l.latitude === 'number' &&
+          !isNaN(l.latitude) &&
+          typeof l.longitude === 'number' &&
+          !isNaN(l.longitude)
+      ),
     [leads]
   );
 
   const mapCenter = useMemo<[number, number]>(() => {
-    if (selectedLead && selectedLead.latitude && selectedLead.longitude) {
+    if (
+      selectedLead &&
+      typeof selectedLead.latitude === 'number' &&
+      !isNaN(selectedLead.latitude) &&
+      typeof selectedLead.longitude === 'number' &&
+      !isNaN(selectedLead.longitude)
+    ) {
       return [selectedLead.latitude, selectedLead.longitude];
     }
     if (validLeads.length > 0) {
       const avgLat = validLeads.reduce((a, b) => a + (b.latitude || 0), 0) / validLeads.length;
       const avgLon = validLeads.reduce((a, b) => a + (b.longitude || 0), 0) / validLeads.length;
-      return [avgLat, avgLon];
+      if (!isNaN(avgLat) && !isNaN(avgLon)) {
+        return [avgLat, avgLon];
+      }
     }
     return center;
   }, [validLeads, selectedLead, center]);
