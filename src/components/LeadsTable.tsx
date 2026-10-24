@@ -137,22 +137,22 @@ export function LeadsTable({
   };
 
   return (
-    <div className="bg-[#0b0d13]/90 backdrop-blur-md border border-white/[0.08] rounded-xl overflow-hidden shadow-2xl flex flex-col h-full">
-      {/* Untitled UI Filter Bar & Quick Search */}
-      <div className="p-3.5 border-b border-white/[0.08] bg-[#090b10] flex flex-col md:flex-row md:items-center justify-between gap-3">
+    <div className="bg-[#0b0d13] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm flex flex-col h-full">
+      {/* Filter Bar & Quick Search */}
+      <div className="p-3.5 border-b border-white/[0.08] bg-[#0c0e14] flex flex-col md:flex-row md:items-center justify-between gap-3">
         {/* Filter Pills with Badge Counters */}
         <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
               activeFilter === 'all'
-                ? 'bg-zinc-800 text-white shadow-sm border border-white/[0.15]'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                ? 'bg-zinc-800 text-white shadow-sm border border-zinc-700'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
             }`}
           >
             <span>Todos</span>
-            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-              activeFilter === 'all' ? 'bg-zinc-700 text-zinc-200' : 'bg-zinc-800/70 text-zinc-400'
+            <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full ${
+              activeFilter === 'all' ? 'bg-zinc-700 text-zinc-200' : 'bg-zinc-800 text-zinc-400'
             }`}>
               {counts.all}
             </span>
@@ -160,15 +160,15 @@ export function LeadsTable({
 
           <button
             onClick={() => setActiveFilter('no_site')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
               activeFilter === 'no_site'
                 ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
             }`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            <span className="w-2 h-2 rounded-full bg-amber-400" />
             <span>Sem Site</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/10 text-amber-300">
+            <span className="text-xs font-mono px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300">
               {counts.no_site}
             </span>
           </button>
@@ -176,15 +176,15 @@ export function LeadsTable({
           {counts.site_down > 0 && (
             <button
               onClick={() => setActiveFilter('site_down')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
                 activeFilter === 'site_down'
                   ? 'bg-red-500/20 text-red-300 border border-red-500/40'
-                  : 'text-red-400/80 hover:text-red-300 hover:bg-red-500/10'
+                  : 'text-zinc-400 hover:text-red-300 hover:bg-red-500/10'
               }`}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+              <span className="w-2 h-2 rounded-full bg-red-400" />
               <span>Fora do Ar</span>
-              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-red-500/20 text-red-300">
+              <span className="text-xs font-mono px-1.5 py-0.5 rounded-full bg-red-500/20 text-red-300">
                 {counts.site_down}
               </span>
             </button>
@@ -192,44 +192,44 @@ export function LeadsTable({
 
           <button
             onClick={() => setActiveFilter('bad_site_advertisers')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
               activeFilter === 'bad_site_advertisers'
                 ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
             }`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+            <span className="w-2 h-2 rounded-full bg-rose-400" />
             <span>Ads Falhos</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-rose-500/10 text-rose-300">
+            <span className="text-xs font-mono px-1.5 py-0.5 rounded-full bg-rose-500/10 text-rose-300">
               {counts.bad_site_advertisers}
             </span>
           </button>
 
           <button
             onClick={() => setActiveFilter('with_whatsapp')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
               activeFilter === 'with_whatsapp'
                 ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
             }`}
           >
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400" />
             <span>WhatsApp</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-300">
+            <span className="text-xs font-mono px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-300">
               {counts.with_whatsapp}
             </span>
           </button>
 
           <button
             onClick={() => setActiveFilter('high_score')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 ${
               activeFilter === 'high_score'
                 ? 'bg-amber-400 text-zinc-950 font-semibold'
-                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/40'
             }`}
           >
             <span>Score 75+</span>
-            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+            <span className={`text-xs font-mono px-1.5 py-0.5 rounded-full ${
               activeFilter === 'high_score' ? 'bg-zinc-900 text-amber-300' : 'bg-zinc-800 text-zinc-400'
             }`}>
               {counts.high_score}
@@ -257,7 +257,7 @@ export function LeadsTable({
           >
             <Download className="w-3.5 h-3.5 text-zinc-400" />
             <span className="hidden sm:inline">Exportar</span>
-            <span className="font-mono text-[10px] text-zinc-500">CSV</span>
+            <span className="font-mono text-xs text-zinc-400">CSV</span>
           </button>
         </div>
       </div>
@@ -321,14 +321,14 @@ export function LeadsTable({
                     {/* 2. Empresa & Local com Avatar Chip */}
                     <td className="py-3 px-3.5 max-w-[230px]">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 rounded-lg bg-zinc-800 border border-white/[0.08] flex items-center justify-center text-[11px] font-bold text-zinc-300 shrink-0 group-hover:border-amber-500/40 transition-colors">
+                        <div className="w-7 h-7 rounded-lg bg-zinc-800 border border-zinc-700/60 flex items-center justify-center text-xs font-semibold text-zinc-200 shrink-0 group-hover:border-amber-500/40 transition-colors">
                           {companyInitials}
                         </div>
                         <div className="min-w-0">
-                          <div className="font-semibold text-zinc-100 text-xs truncate group-hover:text-amber-300 transition-colors">
+                          <div className="font-medium text-zinc-100 text-xs truncate group-hover:text-amber-300 transition-colors">
                             {lead.name}
                           </div>
-                          <div className="text-[11px] text-zinc-400 flex items-center gap-1.5 mt-0.5 font-sans truncate">
+                          <div className="text-xs text-zinc-400 flex items-center gap-1.5 mt-0.5 font-sans truncate">
                             <span className="truncate">{lead.category || 'Geral'}</span>
                             {lead.neighborhood && (
                               <>
@@ -348,32 +348,32 @@ export function LeadsTable({
                           <Star className="w-3.5 h-3.5 fill-amber-400" />
                           <span className="font-mono font-semibold">{lead.rating ? lead.rating.toFixed(1) : '—'}</span>
                         </div>
-                        <span className="text-zinc-500 text-[11px]">
+                        <span className="text-zinc-400 text-xs">
                           ({lead.reviews_count})
                         </span>
                       </div>
                     </td>
 
-                    {/* 4. Diagnóstico Técnico (Untitled UI Pill Badges) */}
+                    {/* 4. Diagnóstico Técnico */}
                     <td className="py-3 px-3.5">
                       <div className="flex flex-wrap items-center gap-1.5">
                         {lead.site_status === 'offline_or_expired' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-500/15 text-red-300 border border-red-500/30">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-red-500/15 text-red-300 border border-red-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
                             Fora do Ar
                           </span>
                         ) : lead.website_type === 'none' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
                             <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                             Sem Site
                           </span>
                         ) : lead.website_type === 'social_or_linktree' ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-purple-500/15 text-purple-300 border border-purple-500/30">
                             <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
                             Linktree
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-zinc-800 text-zinc-300 border border-white/[0.08]">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium bg-zinc-800 text-zinc-300 border border-zinc-700">
                             <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
                             Domínio
                           </span>
@@ -381,23 +381,23 @@ export function LeadsTable({
 
                         {lead.website_type === 'custom_domain' && lead.site_status === 'online' && (
                           lead.has_ssl ? (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-xs font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
                               <ShieldCheck className="w-3 h-3" /> SSL
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-rose-400 bg-rose-500/10 border border-rose-500/20">
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-xs font-medium text-rose-400 bg-rose-500/10 border border-rose-500/20">
                               <ShieldAlert className="w-3 h-3" /> Sem SSL
                             </span>
                           )
                         )}
 
                         {lead.has_meta_pixel && (
-                          <span className="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-medium text-cyan-300 bg-cyan-500/10 border border-cyan-500/20">
+                          <span className="px-1.5 py-0.5 rounded-md text-xs font-mono font-medium text-cyan-300 bg-cyan-500/10 border border-cyan-500/20">
                             Pixel
                           </span>
                         )}
                         {lead.has_google_tags && (
-                          <span className="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20">
+                          <span className="px-1.5 py-0.5 rounded-md text-xs font-mono font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20">
                             G-Tag
                           </span>
                         )}
@@ -413,14 +413,14 @@ export function LeadsTable({
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500 text-emerald-400 hover:text-zinc-950 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-[11px] transition-all font-medium active:scale-95 shadow-sm"
+                          className="inline-flex items-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500 text-emerald-300 hover:text-zinc-950 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-xs transition-colors font-medium active:scale-95 shadow-sm"
                           title="Iniciar conversa no WhatsApp"
                         >
                           <MessageCircle className="w-3.5 h-3.5" />
                           <span>WhatsApp</span>
                         </a>
                       ) : (
-                        <span className="text-zinc-500 text-[11px] font-mono">
+                        <span className="text-zinc-400 text-xs font-mono">
                           {lead.phone || 'Sem contato'}
                         </span>
                       )}
@@ -431,7 +431,7 @@ export function LeadsTable({
                       <select
                         value={lead.crm_stage}
                         onChange={(e) => onUpdateCrmStage(lead.id, e.target.value as CrmStage)}
-                        className={`border rounded-lg px-2 py-1 text-[11px] font-medium focus:outline-none transition-all cursor-pointer ${getStageBadgeColor(lead.crm_stage)}`}
+                        className={`border rounded-lg px-2.5 py-1 text-xs font-medium focus:outline-none transition-colors cursor-pointer ${getStageBadgeColor(lead.crm_stage)}`}
                       >
                         <option value="new" className="bg-[#0f1219] text-zinc-200">Novo</option>
                         <option value="qualified" className="bg-[#0f1219] text-amber-300">Qualificado</option>
@@ -449,7 +449,7 @@ export function LeadsTable({
                           onSelectLead(lead);
                           onLocateOnMap?.(lead);
                         }}
-                        className="text-zinc-500 hover:text-zinc-200 p-1.5 rounded-lg hover:bg-zinc-800/80 transition-all"
+                        className="text-zinc-400 hover:text-white p-1.5 rounded-lg hover:bg-zinc-800 transition-colors"
                         title="Abrir dossiê completo"
                       >
                         <ChevronRight className="w-4 h-4" />
@@ -463,12 +463,12 @@ export function LeadsTable({
         </table>
       </div>
 
-      {/* Untitled UI Table Footer */}
-      <div className="px-4 py-2.5 border-t border-white/[0.08] bg-[#090b10] flex items-center justify-between text-xs text-zinc-500">
+      {/* Table Footer */}
+      <div className="px-4 py-3 border-t border-white/[0.08] bg-[#0c0e14] flex items-center justify-between text-xs text-zinc-400">
         <span>
-          Mostrando <strong className="text-zinc-300">{filteredLeads.length}</strong> de <strong className="text-zinc-300">{leads.length}</strong> empresas
+          Mostrando <strong className="text-zinc-200">{filteredLeads.length}</strong> de <strong className="text-zinc-200">{leads.length}</strong> empresas
         </span>
-        <span className="font-mono text-[10px] text-zinc-600">
+        <span className="font-mono text-xs text-zinc-400">
           Status: Atualizado em tempo real
         </span>
       </div>

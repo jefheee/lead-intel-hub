@@ -1,5 +1,15 @@
 # Changelog - Lead Intel Hub
 
+## [2026-10-24] - Eliminação dos 37 Anti-Patterns de Design (Auditoria Impeccable)
+- **Gradient Text Banido:** Substituído título com gradiente por tipografia sólida, nítida e hierárquica em `page.tsx`.
+- **Eliminação de AI Color Palette:** Substituídas cores neon espalhadas por paleta corporativa sóbria (zinc-100 a zinc-400 com acentos semânticos de alta legibilidade).
+- **Remoção de Glowing Accents:** Removidos halos com `shadow-[0_0_15px_...]` e anéis saturados em botões, pins do mapa e cards.
+- **Tipografia e Tiny Text Corrigidos:** Elevadas fontes microscópicas (`text-[9px]`, `text-[10px]`, `text-[11px]`) para escala de leitura confortável (`text-xs` e `text-sm`).
+- **Desaninhamento de Cards:** Estrutura de containers do CommandBar e filtros da tabela desaninhados para visual limpo.
+- **Contraste de Texto:** Eliminado `gray text on colored background` em badges e marcadores do mapa.
+- **Hidratação Blindada:** Implementado `mounted` state no header para blindagem total contra extensões de navegador.
+- **Arquivos Afetados:** `src/app/page.tsx`, `src/components/StatsOverview.tsx`, `src/components/OmniCommandBar.tsx`, `src/components/InteractiveMap.tsx`, `src/components/LeadsTable.tsx`, `docs/CHANGELOG.md`.
+
 ## [2026-10-24] - Correção de Hydration Mismatch (Extensões de Navegador / Dark Reader)
 - **Blindagem SSR/Hydration:** Adicionado `suppressHydrationWarning` em `<html>` e `<body>` no `src/app/layout.tsx`.
 - **Componentes Blindados:** Adicionado `suppressHydrationWarning` nos elementos dinâmicos de `GridBackground`, `SpotlightCard` e `ShinyText`.

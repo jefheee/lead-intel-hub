@@ -91,27 +91,27 @@ export default function InteractiveMap({
   }, [validLeads, selectedLead, center]);
 
   const createCustomIcon = (lead: Lead, isSelected: boolean) => {
-    let pinBg = 'bg-zinc-800 text-zinc-300 border-zinc-700';
-    let pulse = '';
+    let pinBg = 'bg-zinc-900 text-zinc-100 border-zinc-700';
+    let ringClass = '';
 
     if (lead.site_status === 'offline_or_expired' || ((lead.has_meta_pixel || lead.has_google_tags) && !lead.has_ssl)) {
-      pinBg = 'bg-rose-600 text-white border-rose-400 font-bold';
-      pulse = 'ring-2 ring-rose-500/50 shadow-[0_0_8px_rgba(244,63,94,0.5)]';
+      pinBg = 'bg-rose-600 text-white border-rose-500 font-bold';
+      ringClass = 'ring-2 ring-rose-400/30';
     } else if (lead.opportunity_score >= 75 || lead.website_type === 'none') {
       pinBg = 'bg-amber-400 text-zinc-950 border-amber-300 font-bold';
-      pulse = 'ring-2 ring-amber-500/50 shadow-[0_0_8px_rgba(245,158,11,0.5)]';
+      ringClass = 'ring-2 ring-amber-400/30';
     } else if (lead.whatsapp_link) {
-      pinBg = 'bg-emerald-600 text-white border-emerald-400 font-bold';
-      pulse = 'ring-2 ring-emerald-500/50 shadow-[0_0_8px_rgba(16,185,129,0.5)]';
+      pinBg = 'bg-emerald-600 text-white border-emerald-500 font-bold';
+      ringClass = 'ring-2 ring-emerald-400/30';
     }
 
     if (isSelected) {
-      pulse = 'ring-4 ring-white scale-125 z-50 shadow-[0_0_15px_rgba(255,255,255,0.7)]';
+      ringClass = 'ring-2 ring-white scale-125 z-50 shadow-md';
     }
 
     const html = `
       <div class="relative group cursor-pointer flex items-center justify-center transition-transform">
-        <div class="w-6 h-6 rounded-lg border ${pinBg} ${pulse} flex items-center justify-center text-[10px] font-mono shadow-md">
+        <div class="w-6 h-6 rounded-md border ${pinBg} ${ringClass} flex items-center justify-center text-xs font-mono shadow-sm">
           ${lead.opportunity_score}
         </div>
       </div>
@@ -172,49 +172,49 @@ export default function InteractiveMap({
                 <div className="p-3.5 text-xs bg-[#0c0e14] text-zinc-200 rounded-xl max-w-[250px] space-y-2.5 border border-white/[0.1] shadow-2xl font-sans">
                   <div className="flex items-start justify-between gap-2 border-b border-white/[0.08] pb-2">
                     <div>
-                      <div className="font-bold text-white text-xs leading-tight line-clamp-1">
+                      <div className="font-semibold text-white text-xs leading-tight line-clamp-1">
                         {lead.name}
                       </div>
-                      <div className="text-[10px] text-zinc-400 mt-0.5 truncate">
+                      <div className="text-xs text-zinc-400 mt-0.5 truncate">
                         {lead.category || 'Geral'} • {lead.neighborhood || lead.city}
                       </div>
                     </div>
-                    <span className="shrink-0 bg-amber-400/10 text-amber-300 font-mono text-[10px] px-2 py-0.5 rounded-full font-bold border border-amber-500/30">
+                    <span className="shrink-0 bg-amber-400/10 text-amber-300 font-mono text-xs px-2 py-0.5 rounded-full font-bold border border-amber-500/30">
                       {lead.opportunity_score}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-[11px] text-zinc-300">
+                  <div className="flex items-center gap-2 text-xs text-zinc-300">
                     <span className="flex items-center gap-1 text-amber-400 font-medium">
                       <Star className="w-3.5 h-3.5 fill-amber-400" />
                       {lead.rating.toFixed(1)} ({lead.reviews_count})
                     </span>
                     <span className="text-zinc-600">•</span>
                     {lead.site_status === 'offline_or_expired' ? (
-                      <span className="text-rose-400 text-[10px] flex items-center gap-0.5 font-medium">
-                        <ShieldAlert className="w-3 h-3" /> Fora do ar
+                      <span className="text-rose-400 text-xs flex items-center gap-0.5 font-medium">
+                        <ShieldAlert className="w-3.5 h-3.5" /> Fora do ar
                       </span>
                     ) : lead.website_type === 'none' ? (
-                      <span className="text-amber-400 text-[10px] font-medium">Sem site</span>
+                      <span className="text-amber-400 text-xs font-medium">Sem site</span>
                     ) : (
-                      <span className="text-zinc-400 text-[10px]">Site próprio</span>
+                      <span className="text-zinc-400 text-xs">Site próprio</span>
                     )}
                   </div>
 
                   <div className="pt-1 flex gap-2">
                     <button
                       onClick={() => onSelectLead(lead)}
-                      className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-1.5 px-2.5 rounded-lg text-[11px] transition text-center border border-white/[0.08] flex items-center justify-center gap-1"
+                      className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-1.5 px-2.5 rounded-lg text-xs transition text-center border border-white/[0.08] flex items-center justify-center gap-1"
                     >
                       <span>Abrir Dossiê</span>
-                      <ArrowRight className="w-3 h-3 text-zinc-400" />
+                      <ArrowRight className="w-3.5 h-3.5 text-zinc-400" />
                     </button>
                     {lead.whatsapp_link && (
                       <a
                         href={lead.whatsapp_link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white p-1.5 rounded-lg text-[11px] flex items-center justify-center transition shadow-sm"
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white p-1.5 rounded-lg text-xs flex items-center justify-center transition shadow-sm"
                         title="Abrir no WhatsApp"
                       >
                         <MessageCircle className="w-3.5 h-3.5" />
@@ -228,18 +228,18 @@ export default function InteractiveMap({
         })}
       </MapContainer>
 
-      {/* Untitled UI Map Legend */}
-      <div className="absolute bottom-3 left-3 z-[400] bg-[#0c0e14]/90 backdrop-blur-md border border-white/[0.08] rounded-xl px-3 py-1.5 text-[10px] font-sans text-zinc-300 flex items-center gap-3.5 shadow-xl">
+      {/* Map Legend */}
+      <div className="absolute bottom-4 left-4 z-[400] bg-[#0c0e14]/95 backdrop-blur-md border border-zinc-800 rounded-lg px-3 py-2 text-xs font-sans text-zinc-300 flex items-center gap-4 shadow-md">
         <span className="flex items-center gap-1.5 font-medium">
-          <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#f59e0b]" /> 
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-400" /> 
           Alta Prioridade (75+)
         </span>
         <span className="flex items-center gap-1.5 font-medium">
-          <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]" /> 
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-500" /> 
           Falhas / Fora do Ar
         </span>
         <span className="flex items-center gap-1.5 font-medium">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" /> 
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> 
           WhatsApp Direto
         </span>
       </div>

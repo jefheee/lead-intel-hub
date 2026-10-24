@@ -197,6 +197,11 @@ export default function DashboardPage() {
     );
   };
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const totalLeads = leads.length;
   const noSiteLeads = leads.filter(
     (l) => l.website_type === 'none' || l.website_type === 'social_or_linktree'
@@ -208,25 +213,27 @@ export default function DashboardPage() {
   const withWhatsApp = leads.filter((l) => Boolean(l.whatsapp_link)).length;
 
   return (
-    <main className="min-h-screen bg-[#08090d] text-zinc-100 flex flex-col font-sans relative overflow-x-hidden selection:bg-amber-500/25 selection:text-amber-200">
+    <main className="min-h-screen bg-[#08090d] text-zinc-100 flex flex-col font-sans relative overflow-x-hidden selection:bg-amber-500/20 selection:text-amber-100">
       {/* React Bits: Subtle ambient dark grid background */}
       <GridBackground />
 
-      {/* Untitled UI Executive Dark Header */}
+      {/* Header: Design System sóbrio de alta hierarquia */}
       <header className="border-b border-white/[0.08] bg-[#0c0e14]/90 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 h-14 flex items-center justify-between">
         {/* Brand Group */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-            <Radar className="w-4 h-4 text-zinc-950 animate-spin [animation-duration:8s]" />
+          <div className="w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center shadow-sm">
+            {mounted ? (
+              <Radar className="w-4 h-4 text-zinc-950 animate-spin [animation-duration:8s]" />
+            ) : (
+              <div className="w-4 h-4 rounded-full bg-zinc-950/40" />
+            )}
           </div>
-          <div className="flex items-center gap-2">
-            <ShinyText 
-              text="LEAD INTEL HUB"
-              className="text-xs md:text-sm font-bold tracking-wider uppercase text-white font-sans"
-              shimmerColor="rgba(245, 158, 11, 0.95)"
-            />
-            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-zinc-800/80 text-amber-400 border border-white/[0.08]">
-              <DecryptedText text="B2B RADAR v2.4" speed={30} maxIterations={8} animateOn="mount" />
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-sm font-semibold tracking-tight text-white font-sans">
+              Lead Intel Hub
+            </h1>
+            <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-xs font-mono font-medium bg-zinc-800 text-zinc-300 border border-zinc-700/60">
+              Radar B2B
             </span>
           </div>
         </div>
