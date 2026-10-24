@@ -10,17 +10,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0a0a0c",
-        foreground: "#f4f4f6",
+        background: "#08090d",
+        foreground: "#f4f5f8",
+        brand: {
+          50: "#eef4ff",
+          100: "#e0ebff",
+          500: "#6366f1",
+          600: "#4f46e5",
+          700: "#4338ca",
+        },
         surface: {
-          50: "#1f2024",
-          100: "#16171a",
-          200: "#111215",
-          300: "#0d0e10",
+          50: "#1f242f",
+          100: "#161922",
+          200: "#0f1219",
+          300: "#090a0f",
         },
         border: {
-          subtle: "rgba(255, 255, 255, 0.07)",
-          strong: "rgba(255, 255, 255, 0.15)",
+          subtle: "rgba(255, 255, 255, 0.08)",
+          strong: "rgba(255, 255, 255, 0.16)",
         },
         tactical: {
           amber: "#f59e0b",
@@ -28,6 +35,15 @@ const config: Config = {
           emerald: "#10b981",
           rose: "#f43f5e",
         },
+      },
+      keyframes: {
+        "radar-sweep": {
+          "0%": { transform: "rotate(0deg)" },
+          "100%": { transform: "rotate(360deg)" },
+        },
+      },
+      animation: {
+        "radar-sweep": "radar-sweep 4s linear infinite",
       },
     },
   },

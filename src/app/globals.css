@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --background: #090a0c;
-  --foreground: #f2f3f5;
+  --background: #08090d;
+  --foreground: #f4f5f8;
 }
 
 body {
@@ -16,26 +16,36 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbars - Industrial Dark Minimal */
+/* React Bits: Shiny Text animation */
+@keyframes shiny-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* Custom scrollbars - Untitled UI Dark Minimal */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0d0e11;
+  background: #090a0f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #23252a;
-  border-radius: 2px;
+  background: #1f242f;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #363940;
+  background: #333948;
 }
 
-/* Text Selection - Tactical Amber */
+/* Text Selection - Amber Gold Glow */
 ::selection {
   background: rgba(245, 158, 11, 0.25);
   color: #fef3c7;
@@ -44,7 +54,7 @@ body {
 /* Leaflet Dark Filter - Converte OpenStreetMap em Dark Tático Sem API Key */
 .leaflet-container {
   font-family: inherit !important;
-  background-color: #0d0e11 !important;
+  background-color: #090a0f !important;
 }
 
 .dark-tiles .leaflet-tile {
@@ -52,14 +62,14 @@ body {
 }
 
 .dark-leaflet-popup .leaflet-popup-content-wrapper {
-  background: #111216 !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+  background: #0f1219 !important;
+  box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
   padding: 0 !important;
-  border-radius: 0.5rem !important;
+  border-radius: 0.75rem !important;
 }
 
 .dark-leaflet-popup .leaflet-popup-tip {
-  background: #111216 !important;
+  background: #0f1219 !important;
   border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 

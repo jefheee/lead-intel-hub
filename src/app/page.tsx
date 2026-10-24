@@ -7,14 +7,21 @@ import {
   List, 
   Columns, 
   Activity,
-  Radio
+  Radio,
+  Radar,
+  Sparkles,
+  Layers
 } from 'lucide-react';
 import { Lead, ScraperHealthStatus, CrmStage, TelemetryLog } from '@/types';
 import { OmniCommandBar } from '@/components/OmniCommandBar';
 import { MapWrapper } from '@/components/MapWrapper';
-import { LeadsTable } from '@/components/LeadsTable';
+import { LeadsTable, FilterPill } from '@/components/LeadsTable';
 import { LeadDrawer } from '@/components/LeadDrawer';
 import { LiveTelemetry } from '@/components/LiveTelemetry';
+import { StatsOverview } from '@/components/StatsOverview';
+import { GridBackground } from '@/components/react-bits/GridBackground';
+import { ShinyText } from '@/components/react-bits/ShinyText';
+import { DecryptedText } from '@/components/react-bits/DecryptedText';
 
 type ViewMode = 'split' | 'map' | 'list';
 
@@ -26,6 +33,7 @@ export default function DashboardPage() {
   const [scraperHealth, setScraperHealth] = useState<ScraperHealthStatus | null>(null);
   const [checkingHealth, setCheckingHealth] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('split');
+  const [activeTableFilter, setActiveTableFilter] = useState<FilterPill>('all');
 
   // Telemetria ao vivo
   const [isScanning, setIsScanning] = useState(false);
@@ -200,100 +208,97 @@ export default function DashboardPage() {
   const withWhatsApp = leads.filter((l) => Boolean(l.whatsapp_link)).length;
 
   return (
-    <main className="min-h-screen bg-[#090a0c] text-[#f4f4f6] flex flex-col font-sans">
-      {/* Header Operacional - Identidade Industrial & Editorial */}
-      <header className="border-b border-white/[0.08] bg-[#0d0e11] sticky top-0 z-30 px-4 lg:px-6 h-12 flex items-center justify-between">
+    <main className="min-h-screen bg-[#08090d] text-zinc-100 flex flex-col font-sans relative overflow-x-hidden selection:bg-amber-500/25 selection:text-amber-200">
+      {/* React Bits: Subtle ambient dark grid background */}
+      <GridBackground />
+
+      {/* Untitled UI Executive Dark Header */}
+      <header className="border-b border-white/[0.08] bg-[#0c0e14]/90 backdrop-blur-md sticky top-0 z-30 px-4 lg:px-8 h-14 flex items-center justify-between">
+        {/* Brand Group */}
         <div className="flex items-center gap-3">
-          {/* Monograma Tipográfico Exclusivo */}
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+            <Radar className="w-4 h-4 text-zinc-950 animate-spin" style={{ animationDuration: '8s' }} />
+          </div>
           <div className="flex items-center gap-2">
-            <span className="font-mono text-[11px] font-bold bg-[#1d1f24] text-[#f59e0b] border border-white/[0.1] px-1.5 py-0.5 rounded tracking-tighter">
-              LIH
+            <ShinyText 
+              text="LEAD INTEL HUB"
+              className="text-xs md:text-sm font-bold tracking-wider uppercase text-white font-sans"
+              shimmerColor="rgba(245, 158, 11, 0.95)"
+            />
+            <span className="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-zinc-800/80 text-amber-400 border border-white/[0.08]">
+              <DecryptedText text="B2B RADAR v2.4" speed={30} maxIterations={8} animateOn="mount" />
             </span>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-xs font-bold tracking-wider uppercase text-white font-mono">
-                LEADINTEL
-              </span>
-              <span className="text-[10px] text-[#52525b] font-mono">
-                // RADAR B2B
-              </span>
-            </div>
           </div>
         </div>
 
-        {/* Telemetria de Métricas Inline */}
-        <div className="hidden md:flex items-center gap-3.5 text-xs font-mono">
-          <span className="text-[#a1a1aa]">
-            BASE: <strong className="text-white font-medium">{totalLeads}</strong>
-          </span>
-          <span className="text-[#3f3f46]">•</span>
-          <span className="text-[#fbbf24]">
-            SEM SITE: <strong>{noSiteLeads}</strong>
-          </span>
-          {expiredSites > 0 && (
-            <>
-              <span className="text-[#3f3f46]">•</span>
-              <span className="text-rose-400">
-                FORA DO AR: <strong>{expiredSites}</strong>
-              </span>
-            </>
-          )}
-          <span className="text-[#3f3f46]">•</span>
-          <span className="text-[#f43f5e]">
-            ANÚNCIOS C/ FALHA: <strong>{badSiteAdvertisers}</strong>
-          </span>
-          <span className="text-[#3f3f46]">•</span>
-          <span className="text-emerald-400">
-            WHATSAPP: <strong>{withWhatsApp}</strong>
-          </span>
-        </div>
-
-        {/* Seletor de Visão & Refresh */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center bg-[#141518] border border-white/[0.08] rounded p-0.5 text-xs font-mono">
+        {/* View Mode & Actions Group (Untitled UI segmented button) */}
+        <div className="flex items-center gap-3">
+          {/* View Mode Switcher */}
+          <div className="flex items-center bg-[#08090d] border border-white/[0.08] rounded-xl p-1 text-xs">
             <button
               onClick={() => setViewMode('split')}
-              className={`p-1 rounded transition ${
-                viewMode === 'split' ? 'bg-[#27272a] text-white' : 'text-[#71717a] hover:text-[#f4f4f6]'
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                viewMode === 'split' 
+                  ? 'bg-zinc-800 text-white shadow-sm' 
+                  : 'text-zinc-400 hover:text-zinc-200'
               }`}
-              title="Visão Dividida"
+              title="Visão Dividida (Mapa + Tabela)"
             >
-              <Columns className="w-3 h-3" />
+              <Columns className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Split</span>
             </button>
             <button
               onClick={() => setViewMode('map')}
-              className={`p-1 rounded transition ${
-                viewMode === 'map' ? 'bg-[#27272a] text-white' : 'text-[#71717a] hover:text-[#f4f4f6]'
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                viewMode === 'map' 
+                  ? 'bg-zinc-800 text-white shadow-sm' 
+                  : 'text-zinc-400 hover:text-zinc-200'
               }`}
               title="Apenas Mapa"
             >
-              <MapIcon className="w-3 h-3" />
+              <MapIcon className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Mapa</span>
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1 rounded transition ${
-                viewMode === 'list' ? 'bg-[#27272a] text-white' : 'text-[#71717a] hover:text-[#f4f4f6]'
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                viewMode === 'list' 
+                  ? 'bg-zinc-800 text-white shadow-sm' 
+                  : 'text-zinc-400 hover:text-zinc-200'
               }`}
               title="Apenas Lista"
             >
-              <List className="w-3 h-3" />
+              <List className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Tabela</span>
             </button>
           </div>
 
+          {/* Quick Refresh Button */}
           <button
             onClick={() => {
               fetchHealth();
               fetchLeads();
             }}
-            className="text-[#71717a] hover:text-[#f4f4f6] bg-[#141518] border border-white/[0.08] p-1.5 rounded text-xs transition"
+            className="text-zinc-400 hover:text-white bg-[#08090d] hover:bg-zinc-800/80 border border-white/[0.08] p-2 rounded-xl text-xs transition-all shadow-sm active:scale-95"
             title="Atualizar dados"
           >
-            <RefreshCw className={`w-3 h-3 ${loadingLeads ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${loadingLeads ? 'animate-spin text-amber-400' : ''}`} />
           </button>
         </div>
       </header>
 
-      {/* Conteúdo Principal */}
-      <div className="flex-1 max-w-[1600px] w-full mx-auto px-3 md:px-5 py-4 flex flex-col gap-3.5">
+      {/* Main Container */}
+      <div className="flex-1 max-w-[1680px] w-full mx-auto px-4 md:px-6 py-5 flex flex-col gap-4 relative z-10">
+        {/* KPI Stats Overview Cards */}
+        <StatsOverview
+          totalLeads={totalLeads}
+          noSiteLeads={noSiteLeads}
+          expiredSites={expiredSites}
+          badSiteAdvertisers={badSiteAdvertisers}
+          withWhatsApp={withWhatsApp}
+          onFilterClick={(filterKey) => setActiveTableFilter(filterKey as FilterPill)}
+        />
+
         {/* Omni-Command Bar */}
         <OmniCommandBar
           onSearch={handleStartSearch}
@@ -305,7 +310,7 @@ export default function DashboardPage() {
           onSeedDemo={handleSeedDemo}
         />
 
-        {/* Live Execution Telemetry */}
+        {/* Live Execution Telemetry Stepper */}
         <LiveTelemetry
           isOpen={isTelemetryOpen}
           onClose={() => setIsTelemetryOpen(false)}
@@ -317,10 +322,10 @@ export default function DashboardPage() {
         />
 
         {/* Split View: Mapa + Tabela */}
-        <div className="flex-1 min-h-[560px]">
+        <div className="flex-1 min-h-[580px]">
           {viewMode === 'split' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 h-full">
-              <div className="lg:col-span-5 h-[380px] lg:h-[620px] sticky top-16">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
+              <div className="lg:col-span-5 h-[420px] lg:h-[640px] sticky top-20">
                 <MapWrapper
                   leads={leads}
                   selectedLead={selectedLead}
@@ -335,13 +340,15 @@ export default function DashboardPage() {
                   onSelectLead={handleSelectLead}
                   onUpdateCrmStage={handleUpdateCrmStage}
                   onLocateOnMap={(lead) => setSelectedLead(lead)}
+                  activeFilter={activeTableFilter}
+                  onFilterChange={setActiveTableFilter}
                 />
               </div>
             </div>
           )}
 
           {viewMode === 'map' && (
-            <div className="w-full h-[660px]">
+            <div className="w-full h-[680px]">
               <MapWrapper
                 leads={leads}
                 selectedLead={selectedLead}
@@ -361,13 +368,15 @@ export default function DashboardPage() {
                   setSelectedLead(lead);
                   setViewMode('split');
                 }}
+                activeFilter={activeTableFilter}
+                onFilterChange={setActiveTableFilter}
               />
             </div>
           )}
         </div>
       </div>
 
-      {/* Drawer Lateral */}
+      {/* Slide-Over Dossier Drawer */}
       <LeadDrawer
         lead={selectedLead}
         isOpen={isDrawerOpen}

@@ -20,20 +20,38 @@ export function ScoreRing({
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (normalizedScore / 100) * circumference;
 
-  const getColorClass = (val: number) => {
-    if (val >= 75) return 'text-[#f59e0b] stroke-[#f59e0b]';
-    if (val >= 45) return 'text-[#fbbf24] stroke-[#d97706]';
-    return 'text-[#71717a] stroke-[#52525b]';
+  const getColorConfig = (val: number) => {
+    if (val >= 75) {
+      return {
+        text: 'text-amber-400',
+        stroke: 'stroke-amber-400',
+        glow: 'drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]',
+      };
+    }
+    if (val >= 45) {
+      return {
+        text: 'text-amber-300',
+        stroke: 'stroke-amber-500',
+        glow: 'drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]',
+      };
+    }
+    return {
+      text: 'text-zinc-500',
+      stroke: 'stroke-zinc-600',
+      glow: '',
+    };
   };
 
+  const config = getColorConfig(normalizedScore);
+
   return (
-    <div className="relative inline-flex items-center justify-center" style={{ width: size, height: size }}>
+    <div className="relative inline-flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="transform -rotate-90">
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          className="stroke-[#202226]"
+          className="stroke-zinc-800/80"
           strokeWidth={strokeWidth}
           fill="none"
         />
@@ -41,7 +59,7 @@ export function ScoreRing({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          className={`${getColorClass(normalizedScore)} transition-all duration-500 ease-out`}
+          className={`${config.stroke} ${config.glow} transition-all duration-700 ease-out`}
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
@@ -50,7 +68,7 @@ export function ScoreRing({
         />
       </svg>
       {showText && (
-        <span className={`absolute font-mono font-bold text-[10px] ${getColorClass(normalizedScore).split(' ')[0]}`}>
+        <span className={`absolute font-mono font-bold text-[10px] tracking-tighter ${config.text}`}>
           {normalizedScore}
         </span>
       )}

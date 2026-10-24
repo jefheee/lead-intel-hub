@@ -8,7 +8,13 @@ import {
   ShieldAlert, 
   ChevronRight, 
   Download, 
-  Search
+  Search,
+  Building,
+  CheckCircle2,
+  XCircle,
+  HelpCircle,
+  ArrowUpDown,
+  Filter
 } from 'lucide-react';
 import { Lead, CrmStage } from '@/types';
 import { ScoreRing } from './ScoreRing';
@@ -19,9 +25,11 @@ interface LeadsTableProps {
   onSelectLead: (lead: Lead) => void;
   onUpdateCrmStage: (leadId: string, newStage: CrmStage) => void;
   onLocateOnMap?: (lead: Lead) => void;
+  activeFilter?: FilterPill;
+  onFilterChange?: (filter: FilterPill) => void;
 }
 
-type FilterPill = 'all' | 'no_site' | 'site_down' | 'bad_site_advertisers' | 'with_whatsapp' | 'high_score';
+export type FilterPill = 'all' | 'no_site' | 'site_down' | 'bad_site_advertisers' | 'with_whatsapp' | 'high_score';
 
 export function LeadsTable({
   leads,
@@ -29,9 +37,20 @@ export function LeadsTable({
   onSelectLead,
   onUpdateCrmStage,
   onLocateOnMap,
+  activeFilter: externalFilter,
+  onFilterChange: externalFilterChange,
 }: LeadsTableProps) {
-  const [activeFilter, setActiveFilter] = useState<FilterPill>('all');
+  const [internalFilter, setInternalFilter] = useState<FilterPill>('all');
   const [searchFilter, setSearchFilter] = useState('');
+
+  const activeFilter = externalFilter !== undefined ? externalFilter : internalFilter;
+  const setActiveFilter = (filter: FilterPill) => {
+    if (externalFilterChange) {
+      externalFilterChange(filter);
+    } else {
+      setInternalFilter(filter);
+    }
+  };
 
   const filteredLeads = useMemo(() => {
     return leads.filter((lead) => {
@@ -105,127 +124,182 @@ export function LeadsTable({
     URL.revokeObjectURL(url);
   };
 
+  const getStageBadgeColor = (stage: CrmStage) => {
+    switch (stage) {
+      case 'new': return 'border-blue-500/30 text-blue-400 bg-blue-500/10';
+      case 'qualified': return 'border-amber-500/30 text-amber-300 bg-amber-500/10';
+      case 'contacted': return 'border-purple-500/30 text-purple-300 bg-purple-500/10';
+      case 'negotiating': return 'border-cyan-500/30 text-cyan-300 bg-cyan-500/10';
+      case 'won': return 'border-emerald-500/30 text-emerald-300 bg-emerald-500/10';
+      case 'discarded': return 'border-zinc-700 text-zinc-500 bg-zinc-800/40';
+      default: return 'border-zinc-700 text-zinc-300 bg-zinc-800';
+    }
+  };
+
   return (
-    <div className="bg-[#111215] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm flex flex-col">
-      {/* Pills de Filtragem & Busca */}
-      <div className="p-3 border-b border-white/[0.07] bg-[#0d0e11] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
-        <div className="flex flex-wrap items-center gap-1.5">
+    <div className="bg-[#0b0d13]/90 backdrop-blur-md border border-white/[0.08] rounded-xl overflow-hidden shadow-2xl flex flex-col h-full">
+      {/* Untitled UI Filter Bar & Quick Search */}
+      <div className="p-3.5 border-b border-white/[0.08] bg-[#090b10] flex flex-col md:flex-row md:items-center justify-between gap-3">
+        {/* Filter Pills with Badge Counters */}
+        <div className="flex flex-wrap items-center gap-1.5 overflow-x-auto pb-1 md:pb-0">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeFilter === 'all'
-                ? 'bg-[#27272a] text-white border border-white/[0.2]'
-                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
+                ? 'bg-zinc-800 text-white shadow-sm border border-white/[0.15]'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
             }`}
           >
-            Todos ({counts.all})
+            <span>Todos</span>
+            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+              activeFilter === 'all' ? 'bg-zinc-700 text-zinc-200' : 'bg-zinc-800/70 text-zinc-400'
+            }`}>
+              {counts.all}
+            </span>
           </button>
 
           <button
             onClick={() => setActiveFilter('no_site')}
-            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeFilter === 'no_site'
-                ? 'bg-[#d97706]/20 text-[#fbbf24] border border-[#f59e0b]/40'
-                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
+                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
             }`}
           >
-            Sem Site ({counts.no_site})
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+            <span>Sem Site</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-amber-500/10 text-amber-300">
+              {counts.no_site}
+            </span>
           </button>
 
           {counts.site_down > 0 && (
             <button
               onClick={() => setActiveFilter('site_down')}
-              className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                 activeFilter === 'site_down'
-                  ? 'bg-rose-950/40 text-rose-300 border border-rose-500/50'
-                  : 'text-rose-400 hover:bg-[#18191d]'
+                  ? 'bg-red-500/20 text-red-300 border border-red-500/40'
+                  : 'text-red-400/80 hover:text-red-300 hover:bg-red-500/10'
               }`}
             >
-              Fora do Ar ({counts.site_down})
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+              <span>Fora do Ar</span>
+              <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-red-500/20 text-red-300">
+                {counts.site_down}
+              </span>
             </button>
           )}
 
           <button
             onClick={() => setActiveFilter('bad_site_advertisers')}
-            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeFilter === 'bad_site_advertisers'
-                ? 'bg-rose-950/40 text-rose-300 border border-rose-500/50'
-                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
+                ? 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
             }`}
           >
-            Anúncios c/ Falhas ({counts.bad_site_advertisers})
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-400" />
+            <span>Ads Falhos</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-rose-500/10 text-rose-300">
+              {counts.bad_site_advertisers}
+            </span>
           </button>
 
           <button
             onClick={() => setActiveFilter('with_whatsapp')}
-            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeFilter === 'with_whatsapp'
-                ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/40'
-                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
             }`}
           >
-            WhatsApp ({counts.with_whatsapp})
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            <span>WhatsApp</span>
+            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded-full bg-emerald-500/10 text-emerald-300">
+              {counts.with_whatsapp}
+            </span>
           </button>
 
           <button
             onClick={() => setActiveFilter('high_score')}
-            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
               activeFilter === 'high_score'
-                ? 'bg-[#27272a] text-[#f59e0b] border border-[#f59e0b]/40'
-                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
+                ? 'bg-amber-400 text-zinc-950 font-semibold'
+                : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/50'
             }`}
           >
-            Score &gt; 75 ({counts.high_score})
+            <span>Score 75+</span>
+            <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
+              activeFilter === 'high_score' ? 'bg-zinc-900 text-amber-300' : 'bg-zinc-800 text-zinc-400'
+            }`}>
+              {counts.high_score}
+            </span>
           </button>
         </div>
 
+        {/* Search & Export Actions */}
         <div className="flex items-center gap-2">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-[#71717a] absolute left-2.5 top-2 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-zinc-500 absolute left-3 top-2.5 pointer-events-none" />
             <input
               type="text"
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
-              placeholder="Filtrar por nome..."
-              className="bg-[#0a0b0d] border border-white/[0.08] rounded-md pl-8 pr-2.5 py-1 text-xs text-[#f4f4f6] placeholder:text-[#52525b] focus:outline-none focus:border-white/[0.2] w-40 md:w-48"
+              placeholder="Buscar por nome, nicho..."
+              className="bg-[#0e1017] border border-white/[0.08] hover:border-white/[0.15] focus:border-amber-500/40 rounded-lg pl-8 pr-3 py-1.5 text-xs text-zinc-100 placeholder:text-zinc-500 focus:outline-none transition-all w-44 md:w-52"
             />
           </div>
 
           <button
             onClick={handleExportCSV}
-            title="Exportar CSV"
-            className="bg-[#18191d] hover:bg-[#222429] border border-white/[0.08] text-[#d4d4d8] hover:text-white px-2 py-1 rounded-md text-xs font-mono flex items-center gap-1 transition"
+            title="Exportar Lista em CSV"
+            className="bg-[#12141c] hover:bg-[#1a1c26] border border-white/[0.08] text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
           >
-            <Download className="w-3 h-3 text-[#a1a1aa]" />
-            <span>CSV</span>
+            <Download className="w-3.5 h-3.5 text-zinc-400" />
+            <span className="hidden sm:inline">Exportar</span>
+            <span className="font-mono text-[10px] text-zinc-500">CSV</span>
           </button>
         </div>
       </div>
 
-      {/* Tabela de Alta Densidade */}
+      {/* Untitled UI High-Density Table */}
       <div className="overflow-x-auto flex-1 max-h-[580px] overflow-y-auto">
         <table className="w-full text-left border-collapse text-xs">
-          <thead className="sticky top-0 z-20 bg-[#0d0e11] border-b border-white/[0.08] text-[#71717a] font-mono uppercase text-[10px] tracking-wider">
+          <thead className="sticky top-0 z-20 bg-[#0c0e14] border-b border-white/[0.08] text-zinc-400 font-sans font-medium text-[11px]">
             <tr>
-              <th className="py-2 px-3">Score</th>
-              <th className="py-2 px-3">Empresa &amp; Local</th>
-              <th className="py-2 px-3">Avaliações</th>
-              <th className="py-2 px-3">Diagnóstico</th>
-              <th className="py-2 px-3">Contato</th>
-              <th className="py-2 px-3">Pipeline</th>
-              <th className="py-2 px-2 text-right">Ação</th>
+              <th className="py-2.5 px-3.5 w-14">Score</th>
+              <th className="py-2.5 px-3.5">Empresa &amp; Local</th>
+              <th className="py-2.5 px-3.5">Avaliações</th>
+              <th className="py-2.5 px-3.5">Diagnóstico Técnico</th>
+              <th className="py-2.5 px-3.5">Contato</th>
+              <th className="py-2.5 px-3.5">Pipeline CRM</th>
+              <th className="py-2.5 px-3 text-right">Ver</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/[0.05]">
+          <tbody className="divide-y divide-white/[0.04]">
             {filteredLeads.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-[#71717a] font-mono text-xs">
-                  Nenhum lead encontrado com os filtros selecionados.
+                <td colSpan={7} className="text-center py-16 text-zinc-500 font-sans text-xs">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <Filter className="w-6 h-6 text-zinc-600" />
+                    <p className="font-medium text-zinc-400">Nenhum lead encontrado com os filtros atuais.</p>
+                    <button
+                      onClick={() => {
+                        setActiveFilter('all');
+                        setSearchFilter('');
+                      }}
+                      className="text-amber-400 hover:underline text-xs"
+                    >
+                      Limpar filtros
+                    </button>
+                  </div>
                 </td>
               </tr>
             ) : (
               filteredLeads.map((lead) => {
                 const isSelected = selectedLeadId === lead.id;
+                const companyInitials = lead.name.slice(0, 2).toUpperCase();
+
                 return (
                   <tr
                     key={lead.id}
@@ -233,87 +307,105 @@ export function LeadsTable({
                       onSelectLead(lead);
                       onLocateOnMap?.(lead);
                     }}
-                    className={`cursor-pointer transition group ${
+                    className={`cursor-pointer transition-colors group ${
                       isSelected
-                        ? 'bg-[#1a1c21] border-l-2 border-[#f59e0b]'
-                        : 'hover:bg-[#15161a]'
+                        ? 'bg-amber-500/[0.07] border-l-2 border-amber-400'
+                        : 'hover:bg-zinc-800/30'
                     }`}
                   >
-                    {/* 1. Score */}
-                    <td className="py-2.5 px-3 whitespace-nowrap">
+                    {/* 1. Score Ring */}
+                    <td className="py-3 px-3.5 whitespace-nowrap">
                       <ScoreRing score={lead.opportunity_score} size={32} strokeWidth={2.8} />
                     </td>
 
-                    {/* 2. Empresa & Local */}
-                    <td className="py-2.5 px-3 max-w-[210px]">
-                      <div className="font-medium text-[#f4f4f6] text-xs truncate group-hover:text-white transition">
-                        {lead.name}
-                      </div>
-                      <div className="text-[10px] text-[#71717a] flex items-center gap-1 mt-0.5 font-mono">
-                        <span className="truncate">{lead.category || 'Geral'}</span>
-                        {lead.neighborhood && (
-                          <>
-                            <span className="text-[#3f3f46]">•</span>
-                            <span className="text-[#a1a1aa] truncate">{lead.neighborhood}</span>
-                          </>
-                        )}
+                    {/* 2. Empresa & Local com Avatar Chip */}
+                    <td className="py-3 px-3.5 max-w-[230px]">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 rounded-lg bg-zinc-800 border border-white/[0.08] flex items-center justify-center text-[11px] font-bold text-zinc-300 shrink-0 group-hover:border-amber-500/40 transition-colors">
+                          {companyInitials}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="font-semibold text-zinc-100 text-xs truncate group-hover:text-amber-300 transition-colors">
+                            {lead.name}
+                          </div>
+                          <div className="text-[11px] text-zinc-400 flex items-center gap-1.5 mt-0.5 font-sans truncate">
+                            <span className="truncate">{lead.category || 'Geral'}</span>
+                            {lead.neighborhood && (
+                              <>
+                                <span className="text-zinc-600">•</span>
+                                <span className="text-zinc-400 truncate">{lead.neighborhood}</span>
+                              </>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </td>
 
                     {/* 3. Avaliações */}
-                    <td className="py-2.5 px-3 whitespace-nowrap">
-                      <div className="flex items-center gap-1 text-[#fbbf24] text-xs font-mono font-medium">
-                        <Star className="w-3 h-3 fill-[#fbbf24]" />
-                        <span>{lead.rating ? lead.rating.toFixed(1) : '—'}</span>
-                        <span className="text-[#71717a] font-normal text-[10px]">
+                    <td className="py-3 px-3.5 whitespace-nowrap">
+                      <div className="flex items-center gap-1.5 text-zinc-200 text-xs font-medium">
+                        <div className="flex items-center gap-1 text-amber-400">
+                          <Star className="w-3.5 h-3.5 fill-amber-400" />
+                          <span className="font-mono font-semibold">{lead.rating ? lead.rating.toFixed(1) : '—'}</span>
+                        </div>
+                        <span className="text-zinc-500 text-[11px]">
                           ({lead.reviews_count})
                         </span>
                       </div>
                     </td>
 
-                    {/* 4. Diagnóstico Técnico */}
-                    <td className="py-2.5 px-3">
-                      <div className="flex flex-wrap items-center gap-1">
+                    {/* 4. Diagnóstico Técnico (Untitled UI Pill Badges) */}
+                    <td className="py-3 px-3.5">
+                      <div className="flex flex-wrap items-center gap-1.5">
                         {lead.site_status === 'offline_or_expired' ? (
-                          <span className="bg-rose-500/10 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded text-[10px] font-mono flex items-center gap-0.5">
-                            <ShieldAlert className="w-2.5 h-2.5" /> Fora do Ar
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-red-500/15 text-red-300 border border-red-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+                            Fora do Ar
                           </span>
                         ) : lead.website_type === 'none' ? (
-                          <span className="bg-amber-500/10 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded text-[10px] font-mono">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
                             Sem Site
                           </span>
                         ) : lead.website_type === 'social_or_linktree' ? (
-                          <span className="bg-[#27272a] text-[#d4d4d8] border border-white/[0.08] px-1.5 py-0.5 rounded text-[10px] font-mono">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-purple-500/15 text-purple-300 border border-purple-500/30">
+                            <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
                             Linktree
                           </span>
                         ) : (
-                          <span className="bg-[#18191d] text-[#a1a1aa] border border-white/[0.06] px-1.5 py-0.5 rounded text-[10px] font-mono">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-zinc-800 text-zinc-300 border border-white/[0.08]">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
                             Domínio
                           </span>
                         )}
 
                         {lead.website_type === 'custom_domain' && lead.site_status === 'online' && (
                           lead.has_ssl ? (
-                            <span className="text-emerald-400 text-[10px] flex items-center gap-0.5 font-mono">
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
                               <ShieldCheck className="w-3 h-3" /> SSL
                             </span>
                           ) : (
-                            <span className="text-rose-400 text-[10px] bg-rose-500/10 px-1 rounded font-mono">
-                              Sem SSL
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-medium text-rose-400 bg-rose-500/10 border border-rose-500/20">
+                              <ShieldAlert className="w-3 h-3" /> Sem SSL
                             </span>
                           )
                         )}
 
                         {lead.has_meta_pixel && (
-                          <span className="bg-[#27272a] text-[#a1a1aa] px-1 py-0.5 rounded text-[9px] font-mono">
+                          <span className="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-medium text-cyan-300 bg-cyan-500/10 border border-cyan-500/20">
                             Pixel
+                          </span>
+                        )}
+                        {lead.has_google_tags && (
+                          <span className="px-1.5 py-0.5 rounded-md text-[9px] font-mono font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20">
+                            G-Tag
                           </span>
                         )}
                       </div>
                     </td>
 
                     {/* 5. Contato Rápido */}
-                    <td className="py-2.5 px-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    <td className="py-3 px-3.5 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                       {lead.whatsapp_link ? (
                         <a
                           href={`${lead.whatsapp_link}?text=${encodeURIComponent(
@@ -321,45 +413,46 @@ export function LeadsTable({
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 bg-[#059669]/15 hover:bg-[#059669] text-[#34d399] hover:text-white border border-[#059669]/30 px-2 py-0.5 rounded text-[10px] transition font-mono font-medium"
-                          title="WhatsApp direto"
+                          className="inline-flex items-center gap-1.5 bg-emerald-500/15 hover:bg-emerald-500 text-emerald-400 hover:text-zinc-950 border border-emerald-500/30 px-2.5 py-1 rounded-lg text-[11px] transition-all font-medium active:scale-95 shadow-sm"
+                          title="Iniciar conversa no WhatsApp"
                         >
-                          <MessageCircle className="w-3 h-3" />
+                          <MessageCircle className="w-3.5 h-3.5" />
                           <span>WhatsApp</span>
                         </a>
                       ) : (
-                        <span className="text-[#52525b] text-[10px] font-mono">
+                        <span className="text-zinc-500 text-[11px] font-mono">
                           {lead.phone || 'Sem contato'}
                         </span>
                       )}
                     </td>
 
-                    {/* 6. Pipeline */}
-                    <td className="py-2.5 px-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    {/* 6. Pipeline CRM */}
+                    <td className="py-3 px-3.5 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                       <select
                         value={lead.crm_stage}
                         onChange={(e) => onUpdateCrmStage(lead.id, e.target.value as CrmStage)}
-                        className="bg-[#0a0b0d] border border-white/[0.08] text-[#d4d4d8] text-[10px] font-mono rounded px-1.5 py-0.5 focus:outline-none focus:border-white/[0.2] transition"
+                        className={`border rounded-lg px-2 py-1 text-[11px] font-medium focus:outline-none transition-all cursor-pointer ${getStageBadgeColor(lead.crm_stage)}`}
                       >
-                        <option value="new">Novo</option>
-                        <option value="qualified">Qualificado</option>
-                        <option value="contacted">Contatado</option>
-                        <option value="negotiating">Negociando</option>
-                        <option value="won">Ganho</option>
-                        <option value="discarded">Descartado</option>
+                        <option value="new" className="bg-[#0f1219] text-zinc-200">Novo</option>
+                        <option value="qualified" className="bg-[#0f1219] text-amber-300">Qualificado</option>
+                        <option value="contacted" className="bg-[#0f1219] text-purple-300">Contatado</option>
+                        <option value="negotiating" className="bg-[#0f1219] text-cyan-300">Negociando</option>
+                        <option value="won" className="bg-[#0f1219] text-emerald-300">Ganho</option>
+                        <option value="discarded" className="bg-[#0f1219] text-zinc-500">Descartado</option>
                       </select>
                     </td>
 
-                    {/* 7. Ação */}
-                    <td className="py-2.5 px-2 text-right">
+                    {/* 7. Ação de Abertura */}
+                    <td className="py-3 px-3 text-right">
                       <button
                         onClick={() => {
                           onSelectLead(lead);
                           onLocateOnMap?.(lead);
                         }}
-                        className="text-[#71717a] hover:text-[#f4f4f6] p-1 rounded transition"
+                        className="text-zinc-500 hover:text-zinc-200 p-1.5 rounded-lg hover:bg-zinc-800/80 transition-all"
+                        title="Abrir dossiê completo"
                       >
-                        <ChevronRight className="w-3.5 h-3.5" />
+                        <ChevronRight className="w-4 h-4" />
                       </button>
                     </td>
                   </tr>
@@ -368,6 +461,16 @@ export function LeadsTable({
             )}
           </tbody>
         </table>
+      </div>
+
+      {/* Untitled UI Table Footer */}
+      <div className="px-4 py-2.5 border-t border-white/[0.08] bg-[#090b10] flex items-center justify-between text-xs text-zinc-500">
+        <span>
+          Mostrando <strong className="text-zinc-300">{filteredLeads.length}</strong> de <strong className="text-zinc-300">{leads.length}</strong> empresas
+        </span>
+        <span className="font-mono text-[10px] text-zinc-600">
+          Status: Atualizado em tempo real
+        </span>
       </div>
     </div>
   );

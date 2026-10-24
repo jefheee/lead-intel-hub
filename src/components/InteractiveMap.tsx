@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from 'react-le
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { Lead } from '@/types';
-import { MessageCircle, Star, ShieldAlert } from 'lucide-react';
+import { MessageCircle, Star, ShieldAlert, ArrowRight } from 'lucide-react';
 
 interface InteractiveMapProps {
   leads: Lead[];
@@ -91,26 +91,27 @@ export default function InteractiveMap({
   }, [validLeads, selectedLead, center]);
 
   const createCustomIcon = (lead: Lead, isSelected: boolean) => {
-    let pinBg = 'bg-[#27272a] text-[#a1a1aa] border-[#3f3f46]';
+    let pinBg = 'bg-zinc-800 text-zinc-300 border-zinc-700';
     let pulse = '';
 
     if (lead.site_status === 'offline_or_expired' || ((lead.has_meta_pixel || lead.has_google_tags) && !lead.has_ssl)) {
-      pinBg = 'bg-[#e11d48] text-white border-[#f43f5e]';
-      pulse = 'ring-2 ring-rose-500/40';
+      pinBg = 'bg-rose-600 text-white border-rose-400 font-bold';
+      pulse = 'ring-2 ring-rose-500/50 shadow-[0_0_8px_rgba(244,63,94,0.5)]';
     } else if (lead.opportunity_score >= 75 || lead.website_type === 'none') {
-      pinBg = 'bg-[#d97706] text-[#0a0a0c] border-[#f59e0b] font-bold';
-      pulse = 'ring-2 ring-amber-500/40';
+      pinBg = 'bg-amber-400 text-zinc-950 border-amber-300 font-bold';
+      pulse = 'ring-2 ring-amber-500/50 shadow-[0_0_8px_rgba(245,158,11,0.5)]';
     } else if (lead.whatsapp_link) {
-      pinBg = 'bg-[#059669] text-white border-[#10b981]';
+      pinBg = 'bg-emerald-600 text-white border-emerald-400 font-bold';
+      pulse = 'ring-2 ring-emerald-500/50 shadow-[0_0_8px_rgba(16,185,129,0.5)]';
     }
 
     if (isSelected) {
-      pulse = 'ring-4 ring-white scale-125 z-50';
+      pulse = 'ring-4 ring-white scale-125 z-50 shadow-[0_0_15px_rgba(255,255,255,0.7)]';
     }
 
     const html = `
       <div class="relative group cursor-pointer flex items-center justify-center transition-transform">
-        <div class="w-6 h-6 rounded-md border ${pinBg} ${pulse} shadow-md flex items-center justify-center text-[10px] font-mono">
+        <div class="w-6 h-6 rounded-lg border ${pinBg} ${pulse} flex items-center justify-center text-[10px] font-mono shadow-md">
           ${lead.opportunity_score}
         </div>
       </div>
@@ -126,15 +127,14 @@ export default function InteractiveMap({
   };
 
   return (
-    <div className="w-full h-full min-h-[380px] rounded-xl overflow-hidden border border-white/[0.08] relative shadow-inner bg-[#0d0e11]">
+    <div className="w-full h-full min-h-[380px] rounded-xl overflow-hidden border border-white/[0.08] relative shadow-2xl bg-[#090a0f]">
       <MapContainer
         center={mapCenter}
         zoom={zoom}
         scrollWheelZoom={true}
         className="w-full h-full z-10 dark-tiles"
-        style={{ background: '#0d0e11' }}
+        style={{ background: '#090a0f' }}
       >
-        {/* OpenStreetMap Padrão com Filtro CSS Dark Tático (Zero API Key, Zero Watermark) */}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -143,22 +143,20 @@ export default function InteractiveMap({
 
         <MapController selectedLead={selectedLead} center={mapCenter} />
 
-        {/* Círculo do raio da busca tático */}
         {validLeads.length > 0 && (
           <Circle
             center={mapCenter}
             radius={searchRadius}
             pathOptions={{
-              color: '#d97706',
+              color: '#f59e0b',
               fillColor: '#f59e0b',
-              fillOpacity: 0.04,
+              fillOpacity: 0.05,
               weight: 1.5,
-              dashArray: '3, 6',
+              dashArray: '4, 8',
             }}
           />
         )}
 
-        {/* Marcadores dos Leads */}
         {validLeads.map((lead) => {
           const isSelected = selectedLead?.id === lead.id;
           return (
@@ -171,51 +169,53 @@ export default function InteractiveMap({
               }}
             >
               <Popup className="dark-leaflet-popup" closeButton={false}>
-                <div className="p-3 text-xs bg-[#121316] text-[#e4e4e7] rounded-lg max-w-[240px] space-y-2 border border-white/[0.1] shadow-2xl font-sans">
-                  <div className="flex items-start justify-between gap-1.5 border-b border-white/[0.08] pb-1.5">
+                <div className="p-3.5 text-xs bg-[#0c0e14] text-zinc-200 rounded-xl max-w-[250px] space-y-2.5 border border-white/[0.1] shadow-2xl font-sans">
+                  <div className="flex items-start justify-between gap-2 border-b border-white/[0.08] pb-2">
                     <div>
-                      <div className="font-semibold text-white text-xs leading-tight line-clamp-1">
+                      <div className="font-bold text-white text-xs leading-tight line-clamp-1">
                         {lead.name}
                       </div>
-                      <div className="text-[10px] text-[#a1a1aa] mt-0.5">
+                      <div className="text-[10px] text-zinc-400 mt-0.5 truncate">
                         {lead.category || 'Geral'} • {lead.neighborhood || lead.city}
                       </div>
                     </div>
-                    <span className="shrink-0 bg-[#27272a] text-[#f59e0b] font-mono text-[10px] px-1.5 py-0.5 rounded font-bold border border-white/[0.08]">
+                    <span className="shrink-0 bg-amber-400/10 text-amber-300 font-mono text-[10px] px-2 py-0.5 rounded-full font-bold border border-amber-500/30">
                       {lead.opportunity_score}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-2 text-[11px] text-[#a1a1aa]">
-                    <span className="flex items-center gap-0.5 text-[#fbbf24] font-medium">
-                      <Star className="w-3 h-3 fill-[#fbbf24]" />
+                  <div className="flex items-center gap-2 text-[11px] text-zinc-300">
+                    <span className="flex items-center gap-1 text-amber-400 font-medium">
+                      <Star className="w-3.5 h-3.5 fill-amber-400" />
                       {lead.rating.toFixed(1)} ({lead.reviews_count})
                     </span>
+                    <span className="text-zinc-600">•</span>
                     {lead.site_status === 'offline_or_expired' ? (
-                      <span className="text-rose-400 text-[10px] flex items-center gap-0.5">
+                      <span className="text-rose-400 text-[10px] flex items-center gap-0.5 font-medium">
                         <ShieldAlert className="w-3 h-3" /> Fora do ar
                       </span>
                     ) : lead.website_type === 'none' ? (
-                      <span className="text-amber-400 text-[10px]">Sem site</span>
+                      <span className="text-amber-400 text-[10px] font-medium">Sem site</span>
                     ) : (
-                      <span className="text-[#a1a1aa] text-[10px]">Site próprio</span>
+                      <span className="text-zinc-400 text-[10px]">Site próprio</span>
                     )}
                   </div>
 
-                  <div className="pt-1 flex gap-1.5">
+                  <div className="pt-1 flex gap-2">
                     <button
                       onClick={() => onSelectLead(lead)}
-                      className="flex-1 bg-white/[0.08] hover:bg-white/[0.15] text-white font-medium py-1 px-2 rounded text-[11px] transition text-center border border-white/[0.08]"
+                      className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-white font-medium py-1.5 px-2.5 rounded-lg text-[11px] transition text-center border border-white/[0.08] flex items-center justify-center gap-1"
                     >
-                      Raio-X
+                      <span>Abrir Dossiê</span>
+                      <ArrowRight className="w-3 h-3 text-zinc-400" />
                     </button>
                     {lead.whatsapp_link && (
                       <a
                         href={lead.whatsapp_link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="bg-[#059669] hover:bg-[#10b981] text-white py-1 px-2 rounded text-[11px] flex items-center justify-center transition"
-                        title="WhatsApp"
+                        className="bg-emerald-600 hover:bg-emerald-500 text-white p-1.5 rounded-lg text-[11px] flex items-center justify-center transition shadow-sm"
+                        title="Abrir no WhatsApp"
                       >
                         <MessageCircle className="w-3.5 h-3.5" />
                       </a>
@@ -228,16 +228,19 @@ export default function InteractiveMap({
         })}
       </MapContainer>
 
-      {/* Legenda Tática de Instrumentação */}
-      <div className="absolute bottom-2.5 left-2.5 z-[400] bg-[#111215]/95 backdrop-blur border border-white/[0.08] rounded-md px-2.5 py-1 text-[10px] font-mono text-[#a1a1aa] flex items-center gap-3 shadow-lg">
-        <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded bg-[#d97706]" /> Ouro (&gt;75 / Sem Site)
+      {/* Untitled UI Map Legend */}
+      <div className="absolute bottom-3 left-3 z-[400] bg-[#0c0e14]/90 backdrop-blur-md border border-white/[0.08] rounded-xl px-3 py-1.5 text-[10px] font-sans text-zinc-300 flex items-center gap-3.5 shadow-xl">
+        <span className="flex items-center gap-1.5 font-medium">
+          <span className="w-2 h-2 rounded-full bg-amber-400 shadow-[0_0_6px_#f59e0b]" /> 
+          Alta Prioridade (75+)
         </span>
-        <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded bg-[#e11d48]" /> Fora do ar / Falha
+        <span className="flex items-center gap-1.5 font-medium">
+          <span className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_6px_#f43f5e]" /> 
+          Falhas / Fora do Ar
         </span>
-        <span className="flex items-center gap-1.5">
-          <span className="w-2 h-2 rounded bg-[#059669]" /> WhatsApp
+        <span className="flex items-center gap-1.5 font-medium">
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_#10b981]" /> 
+          WhatsApp Direto
         </span>
       </div>
     </div>
