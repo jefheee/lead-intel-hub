@@ -1,18 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Search, 
   MapPin, 
   Navigation, 
   Sliders, 
-  Play, 
+  CornerDownLeft, 
   Server, 
   RefreshCw, 
   Database, 
-  Sparkles, 
   Tag, 
-  Power
+  Power,
+  Compass
 } from 'lucide-react';
 import { parseNaturalSearchQuery } from '@/lib/query-parser';
 import { ScraperHealthStatus } from '@/types';
@@ -43,7 +43,6 @@ export function OmniCommandBar({
   const [depth, setDepth] = useState(5);
   const [isGpsLoading, setIsGpsLoading] = useState(false);
 
-  // Auto-parse dinâmico conforme o usuário digita
   const handleInputChange = (val: string) => {
     setNaturalInput(val);
     const parsed = parseNaturalSearchQuery(val);
@@ -63,7 +62,6 @@ export function OmniCommandBar({
         try {
           const lat = pos.coords.latitude;
           const lon = pos.coords.longitude;
-          // Reverse geocoding via Nominatim
           const res = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
           );
@@ -104,67 +102,67 @@ export function OmniCommandBar({
   const isDockerOnline = scraperHealth?.online;
 
   return (
-    <div className="bg-[#0b1324] border border-slate-800 rounded-2xl p-4 md:p-5 shadow-lg space-y-3">
-      {/* Barra de Comando Principal Estilo Raycast / Linear */}
+    <div className="bg-[#111215] border border-white/[0.08] rounded-xl p-3 md:p-4 shadow-xl space-y-3">
+      {/* Omni-Command Input */}
       <form onSubmit={handleSubmit} className="relative flex items-center">
-        <div className="absolute left-4 text-sky-400 flex items-center pointer-events-none">
-          <Search className="w-5 h-5 text-sky-400" />
+        <div className="absolute left-3.5 text-[#71717a] flex items-center pointer-events-none">
+          <Search className="w-4 h-4 text-[#a1a1aa]" />
         </div>
 
         <input
           type="text"
           value={naturalInput}
           onChange={(e) => handleInputChange(e.target.value)}
-          placeholder="O que e onde você quer prospectar? (ex: Clínicas odontológicas em Jardim Eldorado, Palhoça ou Pizzarias no Kobrasol)"
-          className="w-full bg-[#070b14] border border-slate-800 hover:border-slate-700 focus:border-sky-500 rounded-xl pl-12 pr-36 py-3.5 text-sm md:text-base text-slate-100 placeholder:text-slate-500 font-sans focus:outline-none transition shadow-inner"
+          placeholder="O que e onde você quer prospectar? (ex: Clínicas odontológicas em Jardim Eldorado, Palhoça)"
+          className="w-full bg-[#0a0b0d] border border-white/[0.08] hover:border-white/[0.14] focus:border-white/[0.25] rounded-lg pl-10 pr-32 py-3 text-xs md:text-sm text-[#f4f4f6] placeholder:text-[#52525b] font-sans focus:outline-none transition shadow-inner"
         />
 
         <div className="absolute right-2 flex items-center gap-1.5">
           <button
             type="submit"
             disabled={isRunning}
-            className="bg-sky-600 hover:bg-sky-500 disabled:bg-slate-800 text-white font-medium px-4 py-2 rounded-lg text-xs md:text-sm transition flex items-center gap-2 shadow-sm font-sans"
+            className="bg-[#e4e4e7] hover:bg-white disabled:bg-[#27272a] text-[#090a0c] font-semibold px-3.5 py-1.5 rounded-md text-xs transition flex items-center gap-1.5 shadow-sm font-sans"
           >
             {isRunning ? (
               <>
-                <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Varrendo...</span>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                <span>Buscando...</span>
               </>
             ) : (
               <>
-                <Play className="w-4 h-4 fill-white" />
-                <span>Escanear</span>
+                <span>Executar</span>
+                <CornerDownLeft className="w-3 h-3 text-[#71717a]" />
               </>
             )}
           </button>
         </div>
       </form>
 
-      {/* Chips Inteligentes & Controles de Precisão */}
-      <div className="flex flex-wrap items-center justify-between gap-2.5 pt-1 text-xs">
-        {/* Parâmetros Deduzidos e Editáveis */}
-        <div className="flex flex-wrap items-center gap-2">
-          {/* Chip Nicho */}
-          <div className="flex items-center gap-1 bg-[#090d16] border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300">
-            <Tag className="w-3.5 h-3.5 text-sky-400" />
-            <span className="text-slate-500 text-[10px] uppercase font-mono">Nicho:</span>
+      {/* Controles de Precisão & Instrumentação */}
+      <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+        {/* Parâmetros Identificados */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {/* Nicho */}
+          <div className="flex items-center gap-1 bg-[#0a0b0d] border border-white/[0.07] rounded-md px-2.5 py-1 text-[#d4d4d8]">
+            <Tag className="w-3 h-3 text-[#a1a1aa]" />
+            <span className="text-[#71717a] text-[10px] uppercase font-mono">Nicho:</span>
             <input
               type="text"
               value={niche}
               onChange={(e) => setNiche(e.target.value)}
-              className="bg-transparent text-slate-200 text-xs focus:outline-none font-medium w-28 md:w-32"
+              className="bg-transparent text-[#e4e4e7] text-xs focus:outline-none font-medium w-24 md:w-28"
             />
           </div>
 
-          {/* Chip Localização */}
-          <div className="flex items-center gap-1 bg-[#090d16] border border-slate-800 rounded-lg px-2.5 py-1 text-slate-300">
-            <MapPin className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-slate-500 text-[10px] uppercase font-mono">Alvo:</span>
+          {/* Localização */}
+          <div className="flex items-center gap-1 bg-[#0a0b0d] border border-white/[0.07] rounded-md px-2.5 py-1 text-[#d4d4d8]">
+            <MapPin className="w-3 h-3 text-[#a1a1aa]" />
+            <span className="text-[#71717a] text-[10px] uppercase font-mono">Alvo:</span>
             <input
               type="text"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              className="bg-transparent text-slate-200 text-xs focus:outline-none font-medium w-36 md:w-44"
+              className="bg-transparent text-[#e4e4e7] text-xs focus:outline-none font-medium w-32 md:w-40"
             />
           </div>
 
@@ -173,70 +171,69 @@ export function OmniCommandBar({
             type="button"
             onClick={handleUseGps}
             disabled={isGpsLoading}
-            className="flex items-center gap-1 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 px-2 py-1 rounded-lg text-xs transition"
-            title="Usar localização do navegador"
+            className="flex items-center gap-1 bg-[#16171b] hover:bg-[#1f2025] border border-white/[0.08] text-[#a1a1aa] hover:text-[#f4f4f6] px-2 py-1 rounded-md text-[11px] transition"
+            title="Usar coordenadas atuais do navegador"
           >
-            <Navigation className={`w-3.5 h-3.5 text-sky-400 ${isGpsLoading ? 'animate-spin' : ''}`} />
-            <span>{isGpsLoading ? 'Buscando GPS...' : 'Meu GPS'}</span>
+            <Compass className={`w-3 h-3 text-[#f59e0b] ${isGpsLoading ? 'animate-spin' : ''}`} />
+            <span>{isGpsLoading ? 'GPS...' : 'GPS'}</span>
           </button>
 
-          {/* Seletor de Raio */}
-          <div className="flex items-center gap-1 bg-[#090d16] border border-slate-800 rounded-lg px-2 py-1 text-slate-400">
-            <span className="text-[10px] uppercase font-mono text-slate-500">Raio:</span>
+          {/* Raio */}
+          <div className="flex items-center gap-1 bg-[#0a0b0d] border border-white/[0.07] rounded-md px-2 py-1 text-[#a1a1aa] text-[11px]">
+            <span className="text-[10px] font-mono text-[#71717a]">Raio:</span>
             <select
               value={radiusKm}
               onChange={(e) => setRadiusKm(Number(e.target.value))}
-              className="bg-transparent text-slate-200 focus:outline-none text-xs"
+              className="bg-transparent text-[#e4e4e7] focus:outline-none text-[11px]"
             >
-              <option value={3}>3 km</option>
-              <option value={5}>5 km</option>
-              <option value={10}>10 km</option>
-              <option value={15}>15 km</option>
-              <option value={25}>25 km</option>
+              <option value={3} className="bg-[#111215]">3 km</option>
+              <option value={5} className="bg-[#111215]">5 km</option>
+              <option value={10} className="bg-[#111215]">10 km</option>
+              <option value={15} className="bg-[#111215]">15 km</option>
+              <option value={25} className="bg-[#111215]">25 km</option>
             </select>
           </div>
 
-          {/* Seletor de Profundidade */}
-          <div className="flex items-center gap-1 bg-[#090d16] border border-slate-800 rounded-lg px-2 py-1 text-slate-400">
-            <span className="text-[10px] uppercase font-mono text-slate-500">Depth:</span>
+          {/* Depth */}
+          <div className="flex items-center gap-1 bg-[#0a0b0d] border border-white/[0.07] rounded-md px-2 py-1 text-[#a1a1aa] text-[11px]">
+            <span className="text-[10px] font-mono text-[#71717a]">Depth:</span>
             <select
               value={depth}
               onChange={(e) => setDepth(Number(e.target.value))}
-              className="bg-transparent text-slate-200 focus:outline-none text-xs"
+              className="bg-transparent text-[#e4e4e7] focus:outline-none text-[11px]"
             >
-              <option value={3}>3 (~40 leads)</option>
-              <option value={5}>5 (~70 leads)</option>
-              <option value={10}>10 (~140 leads)</option>
-              <option value={20}>20 (~250 leads)</option>
+              <option value={3} className="bg-[#111215]">3 (~40)</option>
+              <option value={5} className="bg-[#111215]">5 (~70)</option>
+              <option value={10} className="bg-[#111215]">10 (~140)</option>
+              <option value={20} className="bg-[#111215]">20 (~250)</option>
             </select>
           </div>
         </div>
 
-        {/* Status do Docker Engine + Botão de Demonstração */}
+        {/* Status do Docker Engine & Demonstração */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 bg-[#070b14] border border-slate-800 px-2.5 py-1 rounded-lg text-xs">
-            <Server className="w-3.5 h-3.5 text-slate-400" />
-            <span className="text-slate-500 font-mono text-[11px]">8080:</span>
+          <div className="flex items-center gap-1.5 bg-[#0a0b0d] border border-white/[0.07] px-2 py-1 rounded-md text-[11px]">
+            <Server className="w-3 h-3 text-[#71717a]" />
+            <span className="text-[#71717a] font-mono text-[10px]">8080:</span>
             {checkingHealth ? (
               <span className="text-amber-400 flex items-center gap-1">
-                <RefreshCw className="w-3 h-3 animate-spin" /> Verificando
+                <RefreshCw className="w-2.5 h-2.5 animate-spin" /> Verificando
               </span>
             ) : isDockerOnline ? (
               <span className="text-emerald-400 font-medium flex items-center gap-1">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" /> Online
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_6px_#10b981]" /> Online
               </span>
             ) : (
               <div className="flex items-center gap-1.5">
                 <span className="text-rose-400 font-medium flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-rose-500" /> Offline
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500" /> Offline
                 </span>
                 <button
                   type="button"
                   onClick={onBootDocker}
-                  className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded text-[10px] flex items-center gap-1 transition font-medium"
-                  title="Executar auto-start do container Docker"
+                  className="bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded text-[9px] flex items-center gap-1 transition font-medium"
                 >
-                  <Power className="w-3 h-3" /> Auto-Iniciar
+                  <Power className="w-2.5 h-2.5" /> Auto-Iniciar
                 </button>
               </div>
             )}
@@ -245,10 +242,10 @@ export function OmniCommandBar({
           <button
             type="button"
             onClick={onSeedDemo}
-            className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white px-2.5 py-1 rounded-lg text-xs transition flex items-center gap-1.5 font-medium"
-            title="Carregar 6 leads de demonstração com coordenadas exatas para testar o mapa imediatamente"
+            className="bg-[#16171b] hover:bg-[#1f2025] border border-white/[0.08] text-[#e4e4e7] px-2.5 py-1 rounded-md text-[11px] transition flex items-center gap-1.5 font-medium"
+            title="Carregar 6 leads com coordenadas exatas para teste imediato"
           >
-            <Database className="w-3.5 h-3.5 text-amber-400" />
+            <Database className="w-3 h-3 text-[#f59e0b]" />
             <span>Dados Demo</span>
           </button>
         </div>

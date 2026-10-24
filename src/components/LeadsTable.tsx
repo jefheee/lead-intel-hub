@@ -8,9 +8,7 @@ import {
   ShieldAlert, 
   ChevronRight, 
   Download, 
-  MapPin, 
-  Search,
-  Filter
+  Search
 } from 'lucide-react';
 import { Lead, CrmStage } from '@/types';
 import { ScoreRing } from './ScoreRing';
@@ -102,22 +100,22 @@ export function LeadsTable({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `leads_intel_hub_${Date.now()}.csv`;
+    link.download = `leads_intel_${Date.now()}.csv`;
     link.click();
     URL.revokeObjectURL(url);
   };
 
   return (
-    <div className="bg-[#0b1324] border border-slate-800 rounded-2xl overflow-hidden shadow-sm flex flex-col">
-      {/* Barra de Filtros em Pills e Ação de Exportar */}
-      <div className="p-3.5 border-b border-slate-800 bg-[#070b14] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <div className="bg-[#111215] border border-white/[0.08] rounded-xl overflow-hidden shadow-sm flex flex-col">
+      {/* Pills de Filtragem & Busca */}
+      <div className="p-3 border-b border-white/[0.07] bg-[#0d0e11] flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex flex-wrap items-center gap-1.5">
           <button
             onClick={() => setActiveFilter('all')}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
               activeFilter === 'all'
-                ? 'bg-sky-600 text-white shadow-sm'
-                : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                ? 'bg-[#27272a] text-white border border-white/[0.2]'
+                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
             }`}
           >
             Todos ({counts.all})
@@ -125,10 +123,10 @@ export function LeadsTable({
 
           <button
             onClick={() => setActiveFilter('no_site')}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
               activeFilter === 'no_site'
-                ? 'bg-amber-600 text-white shadow-sm'
-                : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                ? 'bg-[#d97706]/20 text-[#fbbf24] border border-[#f59e0b]/40'
+                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
             }`}
           >
             Sem Site ({counts.no_site})
@@ -137,44 +135,44 @@ export function LeadsTable({
           {counts.site_down > 0 && (
             <button
               onClick={() => setActiveFilter('site_down')}
-              className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+              className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
                 activeFilter === 'site_down'
-                  ? 'bg-rose-600 text-white shadow-sm'
-                  : 'bg-rose-950/20 text-rose-300 hover:bg-rose-950/40 border border-rose-500/30'
+                  ? 'bg-rose-950/40 text-rose-300 border border-rose-500/50'
+                  : 'text-rose-400 hover:bg-[#18191d]'
               }`}
             >
-              ⚠️ Fora do Ar ({counts.site_down})
+              Fora do Ar ({counts.site_down})
             </button>
           )}
 
           <button
             onClick={() => setActiveFilter('bad_site_advertisers')}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
               activeFilter === 'bad_site_advertisers'
-                ? 'bg-rose-600 text-white shadow-sm'
-                : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                ? 'bg-rose-950/40 text-rose-300 border border-rose-500/50'
+                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
             }`}
           >
-            Anunciam c/ Site Ruim ({counts.bad_site_advertisers})
+            Anúncios c/ Falhas ({counts.bad_site_advertisers})
           </button>
 
           <button
             onClick={() => setActiveFilter('with_whatsapp')}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
               activeFilter === 'with_whatsapp'
-                ? 'bg-emerald-600 text-white shadow-sm'
-                : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                ? 'bg-emerald-950/40 text-emerald-300 border border-emerald-500/40'
+                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
             }`}
           >
-            Com WhatsApp ({counts.with_whatsapp})
+            WhatsApp ({counts.with_whatsapp})
           </button>
 
           <button
             onClick={() => setActiveFilter('high_score')}
-            className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+            className={`px-2.5 py-1 rounded text-xs font-mono font-medium transition ${
               activeFilter === 'high_score'
-                ? 'bg-sky-600 text-white shadow-sm'
-                : 'bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800'
+                ? 'bg-[#27272a] text-[#f59e0b] border border-[#f59e0b]/40'
+                : 'text-[#a1a1aa] hover:text-[#f4f4f6] hover:bg-[#18191d]'
             }`}
           >
             Score &gt; 75 ({counts.high_score})
@@ -183,45 +181,45 @@ export function LeadsTable({
 
         <div className="flex items-center gap-2">
           <div className="relative">
-            <Search className="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2.5 pointer-events-none" />
+            <Search className="w-3.5 h-3.5 text-[#71717a] absolute left-2.5 top-2 pointer-events-none" />
             <input
               type="text"
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
-              placeholder="Filtrar por nome, nicho..."
-              className="bg-[#090d16] border border-slate-800 rounded-lg pl-8 pr-3 py-1.5 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-sky-500 w-44 md:w-56"
+              placeholder="Filtrar por nome..."
+              className="bg-[#0a0b0d] border border-white/[0.08] rounded-md pl-8 pr-2.5 py-1 text-xs text-[#f4f4f6] placeholder:text-[#52525b] focus:outline-none focus:border-white/[0.2] w-40 md:w-48"
             />
           </div>
 
           <button
             onClick={handleExportCSV}
-            title="Exportar para planilha CSV"
-            className="bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-white px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1.5 transition shrink-0"
+            title="Exportar CSV"
+            className="bg-[#18191d] hover:bg-[#222429] border border-white/[0.08] text-[#d4d4d8] hover:text-white px-2 py-1 rounded-md text-xs font-mono flex items-center gap-1 transition"
           >
-            <Download className="w-3.5 h-3.5 text-sky-400" />
+            <Download className="w-3 h-3 text-[#a1a1aa]" />
             <span>CSV</span>
           </button>
         </div>
       </div>
 
-      {/* Tabela de Alta Densidade e Contraste */}
-      <div className="overflow-x-auto flex-1 max-h-[560px] overflow-y-auto">
+      {/* Tabela de Alta Densidade */}
+      <div className="overflow-x-auto flex-1 max-h-[580px] overflow-y-auto">
         <table className="w-full text-left border-collapse text-xs">
-          <thead className="sticky top-0 z-20 bg-[#070b14] border-b border-slate-800 text-slate-400 font-semibold uppercase text-[10px] tracking-wider">
+          <thead className="sticky top-0 z-20 bg-[#0d0e11] border-b border-white/[0.08] text-[#71717a] font-mono uppercase text-[10px] tracking-wider">
             <tr>
-              <th className="py-2.5 px-3">Score</th>
-              <th className="py-2.5 px-3">Empresa &amp; Local</th>
-              <th className="py-2.5 px-3">Prova Social</th>
-              <th className="py-2.5 px-3">Diagnóstico Técnico</th>
-              <th className="py-2.5 px-3">Contato Rápido</th>
-              <th className="py-2.5 px-3">CRM Pipeline</th>
-              <th className="py-2.5 px-2 text-right">Ação</th>
+              <th className="py-2 px-3">Score</th>
+              <th className="py-2 px-3">Empresa &amp; Local</th>
+              <th className="py-2 px-3">Avaliações</th>
+              <th className="py-2 px-3">Diagnóstico</th>
+              <th className="py-2 px-3">Contato</th>
+              <th className="py-2 px-3">Pipeline</th>
+              <th className="py-2 px-2 text-right">Ação</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800/60">
+          <tbody className="divide-y divide-white/[0.05]">
             {filteredLeads.length === 0 ? (
               <tr>
-                <td colSpan={7} className="text-center py-12 text-slate-500">
+                <td colSpan={7} className="text-center py-12 text-[#71717a] font-mono text-xs">
                   Nenhum lead encontrado com os filtros selecionados.
                 </td>
               </tr>
@@ -237,86 +235,77 @@ export function LeadsTable({
                     }}
                     className={`cursor-pointer transition group ${
                       isSelected
-                        ? 'bg-sky-950/25 border-l-2 border-sky-500'
-                        : 'hover:bg-slate-900/60'
+                        ? 'bg-[#1a1c21] border-l-2 border-[#f59e0b]'
+                        : 'hover:bg-[#15161a]'
                     }`}
                   >
-                    {/* 1. Score Ring */}
-                    <td className="py-3 px-3 whitespace-nowrap">
-                      <ScoreRing score={lead.opportunity_score} size={36} strokeWidth={3.5} />
+                    {/* 1. Score */}
+                    <td className="py-2.5 px-3 whitespace-nowrap">
+                      <ScoreRing score={lead.opportunity_score} size={32} strokeWidth={2.8} />
                     </td>
 
                     {/* 2. Empresa & Local */}
-                    <td className="py-3 px-3 max-w-[220px]">
-                      <div className="font-semibold text-slate-100 text-xs truncate group-hover:text-sky-300 transition">
+                    <td className="py-2.5 px-3 max-w-[210px]">
+                      <div className="font-medium text-[#f4f4f6] text-xs truncate group-hover:text-white transition">
                         {lead.name}
                       </div>
-                      <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
+                      <div className="text-[10px] text-[#71717a] flex items-center gap-1 mt-0.5 font-mono">
                         <span className="truncate">{lead.category || 'Geral'}</span>
                         {lead.neighborhood && (
                           <>
-                            <span className="text-slate-600">•</span>
-                            <span className="text-slate-400 font-mono text-[10px] truncate">
-                              {lead.neighborhood}
-                            </span>
+                            <span className="text-[#3f3f46]">•</span>
+                            <span className="text-[#a1a1aa] truncate">{lead.neighborhood}</span>
                           </>
                         )}
                       </div>
                     </td>
 
-                    {/* 3. Prova Social */}
-                    <td className="py-3 px-3 whitespace-nowrap">
-                      <div className="flex items-center gap-1 font-semibold text-amber-400 text-xs">
-                        <Star className="w-3.5 h-3.5 fill-amber-400" />
+                    {/* 3. Avaliações */}
+                    <td className="py-2.5 px-3 whitespace-nowrap">
+                      <div className="flex items-center gap-1 text-[#fbbf24] text-xs font-mono font-medium">
+                        <Star className="w-3 h-3 fill-[#fbbf24]" />
                         <span>{lead.rating ? lead.rating.toFixed(1) : '—'}</span>
-                        <span className="text-slate-400 font-normal text-[11px]">
+                        <span className="text-[#71717a] font-normal text-[10px]">
                           ({lead.reviews_count})
                         </span>
-                      </div>
-                      <div className="text-[10px] text-slate-400 mt-0.5">
-                        {lead.reviews_count >= 30 ? (
-                          <span className="text-emerald-400 font-medium">Caixa / Ativo</span>
-                        ) : (
-                          <span>Iniciante</span>
-                        )}
                       </div>
                     </td>
 
                     {/* 4. Diagnóstico Técnico */}
-                    <td className="py-3 px-3">
+                    <td className="py-2.5 px-3">
                       <div className="flex flex-wrap items-center gap-1">
                         {lead.site_status === 'offline_or_expired' ? (
-                          <span className="bg-rose-500/20 text-rose-300 border border-rose-500/40 px-1.5 py-0.5 rounded text-[10px] font-semibold flex items-center gap-0.5">
-                            <ShieldAlert className="w-3 h-3" /> Fora do Ar
+                          <span className="bg-rose-500/10 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded text-[10px] font-mono flex items-center gap-0.5">
+                            <ShieldAlert className="w-2.5 h-2.5" /> Fora do Ar
                           </span>
                         ) : lead.website_type === 'none' ? (
-                          <span className="bg-amber-500/10 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded text-[10px] font-medium">
+                          <span className="bg-amber-500/10 text-amber-300 border border-amber-500/30 px-1.5 py-0.5 rounded text-[10px] font-mono">
                             Sem Site
                           </span>
                         ) : lead.website_type === 'social_or_linktree' ? (
-                          <span className="bg-sky-500/10 text-sky-300 border border-sky-500/30 px-1.5 py-0.5 rounded text-[10px] font-medium">
-                            Linktree / Rede
+                          <span className="bg-[#27272a] text-[#d4d4d8] border border-white/[0.08] px-1.5 py-0.5 rounded text-[10px] font-mono">
+                            Linktree
                           </span>
                         ) : (
-                          <span className="bg-slate-800 text-slate-300 border border-slate-700 px-1.5 py-0.5 rounded text-[10px] font-mono">
+                          <span className="bg-[#18191d] text-[#a1a1aa] border border-white/[0.06] px-1.5 py-0.5 rounded text-[10px] font-mono">
                             Domínio
                           </span>
                         )}
 
                         {lead.website_type === 'custom_domain' && lead.site_status === 'online' && (
                           lead.has_ssl ? (
-                            <span className="text-emerald-400 flex items-center gap-0.5 text-[10px]" title="SSL HTTPS Ativo">
+                            <span className="text-emerald-400 text-[10px] flex items-center gap-0.5 font-mono">
                               <ShieldCheck className="w-3 h-3" /> SSL
                             </span>
                           ) : (
-                            <span className="text-rose-400 flex items-center gap-0.5 text-[10px] bg-rose-500/10 px-1 rounded font-medium" title="Sem SSL">
-                              <ShieldAlert className="w-3 h-3" /> Sem SSL
+                            <span className="text-rose-400 text-[10px] bg-rose-500/10 px-1 rounded font-mono">
+                              Sem SSL
                             </span>
                           )
                         )}
 
                         {lead.has_meta_pixel && (
-                          <span className="bg-blue-500/10 text-blue-300 border border-blue-500/30 px-1 py-0.5 rounded text-[9px] font-mono">
+                          <span className="bg-[#27272a] text-[#a1a1aa] px-1 py-0.5 rounded text-[9px] font-mono">
                             Pixel
                           </span>
                         )}
@@ -324,7 +313,7 @@ export function LeadsTable({
                     </td>
 
                     {/* 5. Contato Rápido */}
-                    <td className="py-3 px-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    <td className="py-2.5 px-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                       {lead.whatsapp_link ? (
                         <a
                           href={`${lead.whatsapp_link}?text=${encodeURIComponent(
@@ -332,25 +321,25 @@ export function LeadsTable({
                           )}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 px-2 py-1 rounded text-[11px] transition font-medium"
-                          title="Abrir WhatsApp direto"
+                          className="inline-flex items-center gap-1 bg-[#059669]/15 hover:bg-[#059669] text-[#34d399] hover:text-white border border-[#059669]/30 px-2 py-0.5 rounded text-[10px] transition font-mono font-medium"
+                          title="WhatsApp direto"
                         >
-                          <MessageCircle className="w-3.5 h-3.5" />
+                          <MessageCircle className="w-3 h-3" />
                           <span>WhatsApp</span>
                         </a>
                       ) : (
-                        <span className="text-slate-500 text-[11px] font-mono">
+                        <span className="text-[#52525b] text-[10px] font-mono">
                           {lead.phone || 'Sem contato'}
                         </span>
                       )}
                     </td>
 
-                    {/* 6. CRM Pipeline */}
-                    <td className="py-3 px-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
+                    {/* 6. Pipeline */}
+                    <td className="py-2.5 px-3 whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                       <select
                         value={lead.crm_stage}
                         onChange={(e) => onUpdateCrmStage(lead.id, e.target.value as CrmStage)}
-                        className="bg-[#090d16] border border-slate-800 text-slate-300 text-[11px] rounded px-2 py-1 focus:outline-none focus:border-sky-500 transition"
+                        className="bg-[#0a0b0d] border border-white/[0.08] text-[#d4d4d8] text-[10px] font-mono rounded px-1.5 py-0.5 focus:outline-none focus:border-white/[0.2] transition"
                       >
                         <option value="new">Novo</option>
                         <option value="qualified">Qualificado</option>
@@ -362,16 +351,15 @@ export function LeadsTable({
                     </td>
 
                     {/* 7. Ação */}
-                    <td className="py-3 px-2 text-right">
+                    <td className="py-2.5 px-2 text-right">
                       <button
                         onClick={() => {
                           onSelectLead(lead);
                           onLocateOnMap?.(lead);
                         }}
-                        className="text-slate-400 hover:text-sky-400 p-1 rounded transition"
-                        title="Ver Raio-X & Localizar no Mapa"
+                        className="text-[#71717a] hover:text-[#f4f4f6] p-1 rounded transition"
                       >
-                        <ChevronRight className="w-4 h-4" />
+                        <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </td>
                   </tr>

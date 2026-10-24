@@ -1,19 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useTransition } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
-  Target, 
   RefreshCw, 
-  LayoutGrid, 
   Map as MapIcon, 
   List, 
   Columns, 
-  ShieldAlert, 
-  Sparkles, 
-  CheckCircle2, 
-  AlertTriangle 
+  Activity,
+  Radio
 } from 'lucide-react';
-import { Lead, ScrapingJob, ScraperHealthStatus, CrmStage, TelemetryLog } from '@/types';
+import { Lead, ScraperHealthStatus, CrmStage, TelemetryLog } from '@/types';
 import { OmniCommandBar } from '@/components/OmniCommandBar';
 import { MapWrapper } from '@/components/MapWrapper';
 import { LeadsTable } from '@/components/LeadsTable';
@@ -99,13 +95,12 @@ export default function DashboardPage() {
     setTelemetryLogs([]);
     setCurrentStep(1);
 
-    addTelemetryLog(1, 'Iniciando pipeline de prospecção com auto-cura do Docker...', 'info');
+    addTelemetryLog(1, 'Iniciando varredura e checando engine Docker...', 'info');
 
     try {
-      // Simulação progressiva visual enquanto a requisição roda no backend
       const progressTimer = setTimeout(() => {
-        addTelemetryLog(2, `Geocodificando e delimitando perímetro para "${params.location}"...`, 'info');
-      }, 1500);
+        addTelemetryLog(2, `Geocodificando coordenadas para "${params.location}"...`, 'info');
+      }, 1400);
 
       const res = await fetch('/api/scraper/start', {
         method: 'POST',
@@ -118,12 +113,12 @@ export default function DashboardPage() {
 
       if (!res.ok) {
         setScanError(true);
-        addTelemetryLog(currentStep, data.error || 'Erro na requisição da engine', 'error');
+        addTelemetryLog(currentStep, data.error || 'Falha na engine', 'error');
         throw new Error(data.error);
       }
 
-      addTelemetryLog(4, 'Executando auditoria técnica determinística nos domínios...', 'info');
-      addTelemetryLog(5, `Sucesso! ${data.total_found} leads qualificados e plotados na cartografia.`, 'success');
+      addTelemetryLog(4, 'Executando auditoria técnica determinística (Zero-Token)...', 'info');
+      addTelemetryLog(5, `Varredura concluída: ${data.total_found} leads processados.`, 'success');
       setScanComplete(true);
       fetchLeads();
       fetchHealth();
@@ -191,7 +186,6 @@ export default function DashboardPage() {
     );
   };
 
-  // Métricas compactas para barra superior (sem 5 cards soltos)
   const totalLeads = leads.length;
   const noSiteLeads = leads.filter(
     (l) => l.website_type === 'none' || l.website_type === 'social_or_linktree'
@@ -203,79 +197,82 @@ export default function DashboardPage() {
   const withWhatsApp = leads.filter((l) => Boolean(l.whatsapp_link)).length;
 
   return (
-    <main className="min-h-screen bg-[#070b14] text-slate-100 flex flex-col font-sans selection:bg-sky-500/30 selection:text-sky-200">
-      {/* Header Operacional Sóbrio e de Alta Densidade (Design Impeccable) */}
-      <header className="border-b border-slate-800/80 bg-[#090d16] sticky top-0 z-30 px-4 lg:px-6 h-14 flex items-center justify-between shadow-sm">
+    <main className="min-h-screen bg-[#090a0c] text-[#f4f4f6] flex flex-col font-sans">
+      {/* Header Operacional - Identidade Industrial & Editorial */}
+      <header className="border-b border-white/[0.08] bg-[#0d0e11] sticky top-0 z-30 px-4 lg:px-6 h-12 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-sky-600/10 border border-sky-500/30 flex items-center justify-center">
-            <Target className="w-4 h-4 text-sky-400" />
-          </div>
+          {/* Monograma Tipográfico Exclusivo */}
           <div className="flex items-center gap-2">
-            <h1 className="text-sm font-bold text-slate-100 tracking-tight">
-              Lead Intel Hub
-            </h1>
-            <span className="text-[10px] font-mono bg-slate-900 border border-slate-800 text-slate-400 px-1.5 py-0.5 rounded">
-              v2.0 • Operate Mode
+            <span className="font-mono text-[11px] font-bold bg-[#1d1f24] text-[#f59e0b] border border-white/[0.1] px-1.5 py-0.5 rounded tracking-tighter">
+              LIH
             </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-xs font-bold tracking-wider uppercase text-white font-mono">
+                LEADINTEL
+              </span>
+              <span className="text-[10px] text-[#52525b] font-mono">
+                // RADAR B2B
+              </span>
+            </div>
           </div>
         </div>
 
-        {/* Telemetria de Métricas Inline (Compact & High Contrast) */}
-        <div className="hidden md:flex items-center gap-4 text-xs font-mono">
-          <span className="text-slate-400">
-            Total: <strong className="text-slate-100 font-bold">{totalLeads}</strong>
+        {/* Telemetria de Métricas Inline */}
+        <div className="hidden md:flex items-center gap-3.5 text-xs font-mono">
+          <span className="text-[#a1a1aa]">
+            BASE: <strong className="text-white font-medium">{totalLeads}</strong>
           </span>
-          <span className="text-slate-600">•</span>
-          <span className="text-amber-400 font-medium">
-            Sem Site: <strong>{noSiteLeads}</strong>
+          <span className="text-[#3f3f46]">•</span>
+          <span className="text-[#fbbf24]">
+            SEM SITE: <strong>{noSiteLeads}</strong>
           </span>
           {expiredSites > 0 && (
             <>
-              <span className="text-slate-600">•</span>
-              <span className="text-rose-400 font-medium">
-                Fora do Ar: <strong>{expiredSites}</strong>
+              <span className="text-[#3f3f46]">•</span>
+              <span className="text-rose-400">
+                FORA DO AR: <strong>{expiredSites}</strong>
               </span>
             </>
           )}
-          <span className="text-slate-600">•</span>
-          <span className="text-rose-300 font-medium">
-            Anúncios c/ Falha: <strong>{badSiteAdvertisers}</strong>
+          <span className="text-[#3f3f46]">•</span>
+          <span className="text-[#f43f5e]">
+            ANÚNCIOS C/ FALHA: <strong>{badSiteAdvertisers}</strong>
           </span>
-          <span className="text-slate-600">•</span>
-          <span className="text-emerald-400 font-medium">
-            WhatsApp: <strong>{withWhatsApp}</strong>
+          <span className="text-[#3f3f46]">•</span>
+          <span className="text-emerald-400">
+            WHATSAPP: <strong>{withWhatsApp}</strong>
           </span>
         </div>
 
-        {/* Seletor de Layout (Split, Mapa, Lista) */}
+        {/* Seletor de Visão & Refresh */}
         <div className="flex items-center gap-2">
-          <div className="flex items-center bg-[#070b14] border border-slate-800 rounded-lg p-0.5 text-xs">
+          <div className="flex items-center bg-[#141518] border border-white/[0.08] rounded p-0.5 text-xs font-mono">
             <button
               onClick={() => setViewMode('split')}
-              className={`p-1.5 rounded transition ${
-                viewMode === 'split' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+              className={`p-1 rounded transition ${
+                viewMode === 'split' ? 'bg-[#27272a] text-white' : 'text-[#71717a] hover:text-[#f4f4f6]'
               }`}
-              title="Visão Dividida (Mapa + Tabela)"
+              title="Visão Dividida"
             >
-              <Columns className="w-3.5 h-3.5" />
+              <Columns className="w-3 h-3" />
             </button>
             <button
               onClick={() => setViewMode('map')}
-              className={`p-1.5 rounded transition ${
-                viewMode === 'map' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+              className={`p-1 rounded transition ${
+                viewMode === 'map' ? 'bg-[#27272a] text-white' : 'text-[#71717a] hover:text-[#f4f4f6]'
               }`}
               title="Apenas Mapa"
             >
-              <MapIcon className="w-3.5 h-3.5" />
+              <MapIcon className="w-3 h-3" />
             </button>
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded transition ${
-                viewMode === 'list' ? 'bg-sky-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'
+              className={`p-1 rounded transition ${
+                viewMode === 'list' ? 'bg-[#27272a] text-white' : 'text-[#71717a] hover:text-[#f4f4f6]'
               }`}
               title="Apenas Lista"
             >
-              <List className="w-3.5 h-3.5" />
+              <List className="w-3 h-3" />
             </button>
           </div>
 
@@ -284,17 +281,17 @@ export default function DashboardPage() {
               fetchHealth();
               fetchLeads();
             }}
-            className="text-slate-400 hover:text-slate-200 bg-[#070b14] border border-slate-800 p-2 rounded-lg text-xs transition"
+            className="text-[#71717a] hover:text-[#f4f4f6] bg-[#141518] border border-white/[0.08] p-1.5 rounded text-xs transition"
             title="Atualizar dados"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loadingLeads ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3 h-3 ${loadingLeads ? 'animate-spin' : ''}`} />
           </button>
         </div>
       </header>
 
-      {/* Conteúdo Principal do Workspace */}
-      <div className="flex-1 max-w-[1600px] w-full mx-auto px-4 lg:px-6 py-5 flex flex-col gap-4">
-        {/* Omni-Command Bar (Barra de Comando Centralizada Estilo Raycast/Linear) */}
+      {/* Conteúdo Principal */}
+      <div className="flex-1 max-w-[1600px] w-full mx-auto px-3 md:px-5 py-4 flex flex-col gap-3.5">
+        {/* Omni-Command Bar */}
         <OmniCommandBar
           onSearch={handleStartSearch}
           isRunning={isScanning}
@@ -305,7 +302,7 @@ export default function DashboardPage() {
           onSeedDemo={handleSeedDemo}
         />
 
-        {/* Live Execution Telemetry (Aura Campaigns / LeadRadar) */}
+        {/* Live Execution Telemetry */}
         <LiveTelemetry
           isOpen={isTelemetryOpen}
           onClose={() => setIsTelemetryOpen(false)}
@@ -316,12 +313,11 @@ export default function DashboardPage() {
           hasError={scanError}
         />
 
-        {/* Workspace Split-View: Mapa Interativo Exato + Lista Tática */}
-        <div className="flex-1 min-h-[580px]">
+        {/* Split View: Mapa + Tabela */}
+        <div className="flex-1 min-h-[560px]">
           {viewMode === 'split' && (
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-full">
-              {/* Lado Esquerdo: Mapa Interativo Exato com Pinos Coloridos */}
-              <div className="lg:col-span-5 h-[420px] lg:h-[640px] sticky top-20">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 h-full">
+              <div className="lg:col-span-5 h-[380px] lg:h-[620px] sticky top-16">
                 <MapWrapper
                   leads={leads}
                   selectedLead={selectedLead}
@@ -329,7 +325,6 @@ export default function DashboardPage() {
                 />
               </div>
 
-              {/* Lado Direito: Lista/Tabela de Alta Densidade */}
               <div className="lg:col-span-7 flex flex-col h-full">
                 <LeadsTable
                   leads={leads}
@@ -343,7 +338,7 @@ export default function DashboardPage() {
           )}
 
           {viewMode === 'map' && (
-            <div className="w-full h-[680px]">
+            <div className="w-full h-[660px]">
               <MapWrapper
                 leads={leads}
                 selectedLead={selectedLead}
@@ -369,7 +364,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Drawer Lateral de Raio-X com 3 Abas & Dossiê */}
+      {/* Drawer Lateral */}
       <LeadDrawer
         lead={selectedLead}
         isOpen={isDrawerOpen}
