@@ -10,24 +10,23 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#090d16",
-        foreground: "#f1f5f9",
-        card: {
-          DEFAULT: "#0f172a",
-          foreground: "#f8fafc",
-          border: "#1e293b",
+        background: "#0a0a0c",
+        foreground: "#f4f4f6",
+        surface: {
+          50: "#1f2024",
+          100: "#16171a",
+          200: "#111215",
+          300: "#0d0e10",
         },
-        muted: {
-          DEFAULT: "#1e293b",
-          foreground: "#94a3b8",
+        border: {
+          subtle: "rgba(255, 255, 255, 0.07)",
+          strong: "rgba(255, 255, 255, 0.15)",
         },
-        accent: {
-          DEFAULT: "#2563eb",
-          foreground: "#ffffff",
-        },
-        primary: {
-          DEFAULT: "#38bdf8",
-          foreground: "#030712",
+        tactical: {
+          amber: "#f59e0b",
+          gold: "#eab308",
+          emerald: "#10b981",
+          rose: "#f43f5e",
         },
       },
     },
