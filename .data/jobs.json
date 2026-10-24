@@ -1,0 +1,22 @@
+[
+  {
+    "id": "a5641265-b9bd-4f67-9563-393fe0f42c9e",
+    "query": "Pizzarias",
+    "location": "Palhoça - SC",
+    "radius_or_zoom": "15",
+    "status": "failed",
+    "external_job_id": null,
+    "total_found": 0,
+    "created_at": "2026-10-24T12:04:53.490Z"
+  },
+  {
+    "id": "1b87da19-1087-4792-a0e2-66736abf84ba",
+    "query": "Pizzarias",
+    "location": "Palhoça - SC",
+    "radius_or_zoom": "15",
+    "status": "failed",
+    "external_job_id": null,
+    "total_found": 0,
+    "created_at": "2026-10-24T11:48:26.088Z"
+  }
+]
