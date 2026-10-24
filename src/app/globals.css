@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --background: #090d16;
+  --background: #070b14;
   --foreground: #f1f5f9;
 }
 
@@ -21,14 +21,55 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0f172a;
+  background: #090d16;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #334155;
+  background: #1e293b;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #334155;
+}
+
+/* Leaflet Dark Customizations */
+.leaflet-container {
+  font-family: inherit !important;
+  background-color: #070b14 !important;
+}
+
+.dark-leaflet-popup .leaflet-popup-content-wrapper {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0.75rem !important;
+}
+
+.dark-leaflet-popup .leaflet-popup-tip {
+  background: #0b1324 !important;
+  border: 1px solid #334155 !important;
+}
+
+.custom-map-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Print Styles for Technical Audit Dossier */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print\:p-0, .print\:p-0 * {
+    visibility: visible;
+  }
+  .print\:p-0 {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    color: black !important;
+    background: white !important;
+  }
 }

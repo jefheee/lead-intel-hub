@@ -1,121 +1,55 @@
-# 🎯 Lead Intel Hub
+# 🎯 Lead Intel Hub v2.0 • Command-First & Cartografia Tática
 
-Plataforma SaaS local de **Prospecção, Enriquecimento e Auditoria Técnica de Leads B2B**, desenhada para máxima eficiência operacional e **gasto ZERO de tokens de LLM** durante as etapas de extração, crawling e qualificação de negócios locais.
-
----
-
-## ⚡ Filosofia de Arquitetura: Zero-Token vs. On-Demand AI
-
-1. **Extração & Deduplicação Determinística (Zero-Token):**
-   - Conexão direta com a engine local `gosom/google-maps-scraper` rodando em container Docker na porta `8080`.
-   - Busca em lote por nicho + bairro/cidade com geocodificação automática via OpenStreetMap Nominatim.
-   - Deduplicação rigorosa baseada no `place_id` do Google Maps.
-
-2. **Auditoria Técnica Determinística (Zero-Token):**
-   - **Classificador de URL:** Diferencia negócios sem site (`none`), perfis sociais/agregadores (`instagram.com`, `linktr.ee`, `wa.me`) e domínios próprios (`custom_domain`).
-   - **Crawler Leve (Cheerio & Fetch com timeout de 8s):**
-     - Checagem de certificado SSL (HTTPS válido vs. HTTP inseguro).
-     - Detecção de `<meta name="viewport">` para responsividade mobile.
-     - Detecção de assinaturas de tráfego pago: Meta Pixel (`fbq(`) e Google Tags / GTM (`gtag(`, `GTM-`).
-     - Detecção de CMS/Stack: WordPress, Wix, Next.js, Shopify, Webflow, RD Station.
-     - Regex institucional para extração de e-mails (`mailto:` e corpo) e canais sociais (Instagram, Facebook, LinkedIn).
-   - **Normalizador de Telefones BR:** Converte números para o padrão internacional E.164 e gera links diretos para WhatsApp Web (`https://wa.me/55...`).
-   - **Motor de Oportunidade (0 a 100 pts):** Regras de negócio matemáticas priorizando empresas com alta prova social e graves deficiências digitais.
-
-3. **IA Generativa Sob Demanda (On-Demand Gemini 2.5 Flash):**
-   - Chamada **exclusivamente sob demanda** via botão na UI ("Gerar Abordagem").
-   - Utiliza o SDK unificado `@google/genai` (`gemini-2.5-flash`).
-   - Produz mensagens ultra-personalizadas e consultivas para WhatsApp baseadas nos dados técnicos reais já auditados do lead.
+Plataforma SaaS local de **Prospecção, Enriquecimento e Auditoria Técnica de Leads B2B**, desenhada segundo os padrões arquiteturais do **Impeccable em modo `Operate` (Zero AI Slop)** e alimentada por motor de extração determinístico na porta `8080`.
 
 ---
 
-## 🚀 Como Iniciar
+## 🏛️ Fusão de Arquiteturas & Referências Incorporadas
 
-### 1. Iniciar o Motor Scraper Docker (Porta 8080)
+1. **Google Maps Scraper Kit (`C:\Projetos\google-maps-scraper-kit`):**
+   - Integração direta com o container Docker `gosom/google-maps-scraper` na porta `8080`.
+   - Extração de coordenadas geográficas exatas (`latitude`, `longitude`) de cada estabelecimento.
+2. **Auto-Healing & Auto-Start do Docker Engine (`src/services/docker-manager.ts`):**
+   - Elimina o erro de engine offline: detecta status e dispara automaticamente `docker compose up -d` ou inicialização do Docker Desktop no Windows com polling até `200 OK`.
+3. **LeadRadar (Cartografia & Anel de Score):**
+   - Mapa escuro interativo (`InteractiveMap.tsx`) usando tiles Dark Matter da CartoDB e pinos estilizados por nível de oportunidade (Ouro, Fora do Ar, WhatsApp, Baixa).
+   - Anel de pontuação SVG circular de alta fidelidade (`ScoreRing.tsx`).
+4. **Scout (Linktree & Bio Aggregator Unroller):**
+   - Se o lead cadastrar `linktr.ee`, `bio.link`, `beacons.ai`, o crawler entra na página e desdobra links de WhatsApp direto, Instagram e sites reais ocultos.
+5. **AI Sales Team (Dossiê Executivo & Objeções):**
+   - Dossiê técnico imprimível/PDF (`window.print()`) das vulnerabilidades do site do lead.
+   - Playbook determinístico de quebra de objeções reais (*"Já tenho Instagram"*, *"Meu sobrinho cuida"*, *"Não tenho tempo"*, *"Site é caro"*).
+6. **Aura Campaigns (Live Pipeline Telemetry):**
+   - Console visual com cronômetro e progresso etapa por etapa:
+     - `[1/5]` Auto-cura e inicialização do Docker Engine na porta 8080.
+     - `[2/5]` Geocodificação das coordenadas do perímetro alvo.
+     - `[3/5]` Varredura em tempo real no Google Maps.
+     - `[4/5]` Auditoria Técnica Zero-Token (SSL, Stack, Pixels, Linktree, WhatsApp).
+     - `[5/5]` Cálculo do Opportunity Score e plotagem cartográfica.
+7. **Impeccable Design Standard (Modo Operate):**
+   - Removida a estética de "template genérico de IA" (sem cards soltos desordenados e sem degradês roxos sem função).
+   - Workspace Split-View de alta densidade (Mapa + Lista tática com filtros rápidos em pills, busca instantânea e exportação CSV).
+   - Omni-Command Bar centralizada estilo Raycast/Linear com parser determinístico de linguagem natural.
 
-No repositório do scraper local (`C:\Projetos\google-maps-scraper-kit`):
+---
 
-```bash
-docker compose up -d
-```
+## ⚡ Como Iniciar
 
-Verifique se a engine está respondendo em `http://localhost:8080/api/v1/jobs`.
-
-### 2. Configurar Variáveis de Ambiente
-
-Copie o `.env.example` para `.env.local`:
-
-```bash
-cp .env.example .env.local
-```
-
-Preencha os campos conforme sua necessidade:
-
-```env
-SCRAPER_BASE_URL=http://localhost:8080
-SCRAPER_PORT=8080
-SCRAPER_API_KEY=
-
-# Supabase (Opcional - caso não configurado, opera com fallback local em .data/)
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-# Gemini AI (Para geração de pitchs personalizados sob demanda)
-GEMINI_API_KEY=your_gemini_api_key
-
-# PageSpeed (Opcional)
-PAGESPEED_API_KEY=
-```
-
-### 3. Migração do Banco de Dados (Supabase / PostgreSQL)
-
-Execute o script `supabase/migrations/001_init_leads_schema.sql` no SQL Editor do seu projeto Supabase para criar as tabelas `scraping_jobs` e `leads`, enums, índices e triggers de atualização.
-
-### 4. Rodar o Servidor de Desenvolvimento
+### 1. Iniciar o Servidor de Desenvolvimento
 
 ```bash
+cd C:\Projetos\lead-intel-hub
 npm run dev
 ```
 
 Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
 
----
+### 2. Auto-Start do Docker Scraper
 
-## 📊 Estrutura de Diretórios
+Caso o container do scraper (`localhost:8080`) esteja desligado, você pode:
+- Clicar no botão **"Auto-Iniciar"** ao lado do status na barra de comando;
+- Ou iniciar uma varredura normalmente: o sistema fará a auto-cura em background!
 
-```
-lead-intel-hub/
-├── .data/                                  # Fallback local de persistência
-├── supabase/
-│   └── migrations/
-│       └── 001_init_leads_schema.sql       # Schema DDL completo
-├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   ├── leads/                      # Listagem e atualização de leads
-│   │   │   │   └── [id]/
-│   │   │   │       ├── generate-pitch/     # Endpoint Gemini 2.5 Flash
-│   │   │   │       └── re-audit/           # Re-auditoria do site
-│   │   │   └── scraper/
-│   │   │       ├── start/                  # Disparo de varredura
-│   │   │       ├── status/                 # Health check do Docker
-│   │   │       └── seed/                   # Amostras para teste imediato
-│   │   ├── layout.tsx
-│   │   ├── page.tsx                        # Dashboard operacional
-│   │   └── globals.css
-│   ├── components/
-│   │   ├── CaptureRadar.tsx                # Painel de busca e status Docker
-│   │   ├── LeadsTable.tsx                  # Tabela com filtros rápidos (pills)
-│   │   └── LeadDrawer.tsx                  # Raio-X lateral e gerador de pitch
-│   ├── lib/
-│   │   ├── db.ts                           # Repositório resiliente Supabase + Local
-│   │   └── supabase.ts                     # Cliente Supabase
-│   ├── services/
-│   │   ├── scraper-bridge.ts               # Conexão HTTP REST com engine 8080
-│   │   ├── website-auditor.ts              # Crawler determinístico Cheerio/Fetch
-│   │   └── scoring-engine.ts               # Cálculo do Opportunity Score (0 a 100)
-│   └── types/                              # Interfaces TypeScript do sistema
-├── package.json
-└── tsconfig.json
-```
+### 3. Teste Imediato com Dados de Demonstração
+
+Clique no botão **"Dados Demo"** na barra de comando para carregar instantaneamente 6 estabelecimentos reais com coordenadas em Palhoça/São José, pinos coloridos no mapa e diagnósticos técnicos completos.

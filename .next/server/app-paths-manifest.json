@@ -1,7 +1,1 @@
-{
-  "/api/scraper/status/route": "app/api/scraper/status/route.js",
-  "/api/leads/route": "app/api/leads/route.js",
-  "/api/scraper/start/route": "app/api/scraper/start/route.js",
-  "/api/scraper/seed/route": "app/api/scraper/seed/route.js",
-  "/page": "app/page.js"
-}
+{}

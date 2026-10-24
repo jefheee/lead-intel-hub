@@ -92,6 +92,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/scraper/boot/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/scraper/boot">> = Specific
+  const handler = {} as typeof import("../../src/app/api/scraper/boot/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/scraper/seed/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/scraper/seed">> = Specific

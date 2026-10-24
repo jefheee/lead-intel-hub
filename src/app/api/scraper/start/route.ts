@@ -13,19 +13,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const result = await triggerScrapingPipeline({
-      query,
-      location,
-      depth: depth ? parseInt(depth, 10) : 5,
-      zoom: zoom ? parseInt(zoom, 10) : 15,
-      radius: radius ? parseInt(radius, 10) : 10000,
-    });
+    const telemetryLogs: { step: number; total: number; message: string; time: string }[] = [];
+
+    const result = await triggerScrapingPipeline(
+      {
+        query,
+        location,
+        depth: depth ? parseInt(depth, 10) : 5,
+        zoom: zoom ? parseInt(zoom, 10) : 15,
+        radius: radius ? parseInt(radius, 10) : 10000,
+      },
+      (step, total, message) => {
+        telemetryLogs.push({
+          step,
+          total,
+          message,
+          time: new Date().toLocaleTimeString(),
+        });
+      }
+    );
 
     return NextResponse.json({
       success: true,
       job: result.job,
       total_found: result.leads.length,
       leads: result.leads,
+      telemetryLogs,
     });
   } catch (error) {
     console.error('Error starting scrape:', error);

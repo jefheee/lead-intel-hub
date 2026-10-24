@@ -1,9 +1,10 @@
-import { WebsiteType } from '@/types';
+import { WebsiteType, SiteStatus } from '@/types';
 
 export interface ScoringInput {
   rating: number;
   reviews_count: number;
   website_type: WebsiteType;
+  site_status?: SiteStatus;
   has_ssl: boolean;
   is_responsive: boolean;
   cms_or_stack: string | null;
@@ -29,17 +30,20 @@ export function calculateOpportunityScore(input: ScoringInput): ScoringResult {
     tags.push('Alta Prova Social');
   }
 
-  // Regra 2: Sem site ou apenas Linktree / Redes Sociais (+45 pts)
-  if (input.website_type === 'none') {
+  // Regra 2: Site Fora do Ar ou Domínio Expirado (Oportunidade Crítica!)
+  if (input.site_status === 'offline_or_expired') {
+    score += 45;
+    tags.push('Site Fora do Ar / Domínio Expirado');
+  } else if (input.website_type === 'none') {
     score += 45;
     tags.push('Sem Site');
-  } else if (input.website_type === 'social_or_linktree') {
+  } else if (input.website_type === 'social_or_linktree' || input.site_status === 'social_only') {
     score += 45;
-    tags.push('Apenas Redes/Linktree');
+    tags.push('Apenas Redes / Linktree');
   }
 
   // Regra 3: Domínio próprio com falhas críticas (Sem SSL ou Não responsivo) (+40 pts)
-  if (input.website_type === 'custom_domain') {
+  if (input.website_type === 'custom_domain' && input.site_status === 'online') {
     const isUnsafe = !input.has_ssl;
     const isNotMobileFriendly = !input.is_responsive;
 
@@ -64,7 +68,7 @@ export function calculateOpportunityScore(input: ScoringInput): ScoringResult {
 
     if (isRunningAds && isSlowOrHeavy) {
       score += 35;
-      tags.push('Anuncia mas Site Lento/Pesado');
+      tags.push('Anuncia c/ Site Lento/Pesado');
     } else if (isRunningAds) {
       tags.push('Investe em Tráfego');
     }
@@ -76,7 +80,6 @@ export function calculateOpportunityScore(input: ScoringInput): ScoringResult {
     tags.push('WhatsApp Direto');
   }
 
-  // Clamping score entre 0 e 100
   const finalScore = Math.min(100, Math.max(0, score));
 
   return {

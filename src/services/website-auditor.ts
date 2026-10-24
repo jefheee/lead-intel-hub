@@ -1,8 +1,9 @@
 import * as cheerio from 'cheerio';
-import { WebsiteType, AuditStatus } from '@/types';
+import { WebsiteType, AuditStatus, SiteStatus } from '@/types';
 
 export interface AuditResult {
   website_type: WebsiteType;
+  site_status: SiteStatus;
   audit_status: AuditStatus;
   has_ssl: boolean;
   is_responsive: boolean;
@@ -16,7 +17,9 @@ export interface AuditResult {
     linkedin?: string;
     [key: string]: string | undefined;
   };
+  linktree_links: Record<string, string>;
   pagespeed_mobile_score: number | null;
+  discovered_whatsapp?: string | null;
 }
 
 const SOCIAL_OR_AGGREGATOR_DOMAINS = [
@@ -28,15 +31,17 @@ const SOCIAL_OR_AGGREGATOR_DOMAINS = [
   'whatsapp.com',
   'linktr.ee',
   'linktree.com',
-  'ifood.com.br',
-  'tiktok.com',
-  'globo.com',
-  'youtube.com',
-  'bit.ly',
   'bio.link',
+  'bio.site',
   'beacons.ai',
   'instabio.cc',
+  'ifood.com.br',
+  'tiktok.com',
+  'youtube.com',
+  'bit.ly',
 ];
+
+const LINKTREE_AGGREGATORS = ['linktr.ee', 'linktree.com', 'bio.link', 'bio.site', 'beacons.ai', 'instabio.cc'];
 
 const JUNK_EMAIL_EXTENSIONS = ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.css', '.js'];
 const JUNK_EMAIL_DOMAINS = [
@@ -113,7 +118,6 @@ export function normalizeBrazilianPhone(rawPhone: string | null | undefined): {
     ? `(${ddd}) ${number.slice(0, 5)}-${number.slice(5)}`
     : `(${ddd}) ${number.slice(0, 4)}-${number.slice(4)}`;
 
-  // Se for celular (ou número válido de 10/11 dígitos), geramos wa.me
   const whatsappLink = `https://wa.me/55${ddd}${number}`;
 
   return {
@@ -124,9 +128,12 @@ export function normalizeBrazilianPhone(rawPhone: string | null | undefined): {
 }
 
 /**
- * Crawler Leve com AbortController (8s)
+ * Crawler Leve com AbortController (8s) e Resiliência de Rede
  */
-async function fetchHtmlWithTimeout(url: string, timeoutMs = 8000): Promise<{ html: string; finalUrl: string; hasSsl: boolean }> {
+async function fetchHtmlWithTimeout(
+  url: string,
+  timeoutMs = 8000
+): Promise<{ html: string; finalUrl: string; hasSsl: boolean; isDown: boolean }> {
   let targetUrl = url;
   if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://')) {
     targetUrl = 'https://' + targetUrl;
@@ -140,22 +147,26 @@ async function fetchHtmlWithTimeout(url: string, timeoutMs = 8000): Promise<{ ht
       signal: controller.signal,
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 LeadIntelHub/1.0',
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 LeadIntelHub/2.0',
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       },
       redirect: 'follow',
     });
 
     clearTimeout(timeoutId);
+    if (!res.ok && res.status >= 500) {
+      return { html: '', finalUrl: targetUrl, hasSsl: targetUrl.startsWith('https://'), isDown: true };
+    }
+
     const html = await res.text();
     const finalUrl = res.url || targetUrl;
     const hasSsl = finalUrl.startsWith('https://');
 
-    return { html, finalUrl, hasSsl };
+    return { html, finalUrl, hasSsl, isDown: false };
   } catch (error) {
     clearTimeout(timeoutId);
 
-    // Se falhou com HTTPS, tenta HTTP como fallback caso o certificado SSL esteja quebrado
+    // Fallback: Se falhou com HTTPS (ex: certificado quebrado), tenta HTTP
     if (targetUrl.startsWith('https://')) {
       const fallbackUrl = targetUrl.replace('https://', 'http://');
       const fallbackCtrl = new AbortController();
@@ -166,18 +177,81 @@ async function fetchHtmlWithTimeout(url: string, timeoutMs = 8000): Promise<{ ht
           signal: fallbackCtrl.signal,
           headers: {
             'User-Agent':
-              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122.0.0.0 LeadIntelHub/1.0',
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124.0.0.0 LeadIntelHub/2.0',
           },
         });
         clearTimeout(fbTimeout);
         const html = await resFallback.text();
-        return { html, finalUrl: resFallback.url || fallbackUrl, hasSsl: false };
+        return { html, finalUrl: resFallback.url || fallbackUrl, hasSsl: false, isDown: false };
       } catch {
         clearTimeout(fbTimeout);
       }
     }
 
-    throw error;
+    // Domínio falhou por DNS, timeout ou conexão recusada
+    return { html: '', finalUrl: targetUrl, hasSsl: false, isDown: true };
+  }
+}
+
+/**
+ * Linktree & Bio Aggregator Unroller (Inspirado no projeto Scout)
+ * Extrai links reais, WhatsApp e redes contidas no agregador
+ */
+async function unrollLinktree(url: string): Promise<{
+  discoveredWhatsapp: string | null;
+  linktreeLinks: Record<string, string>;
+  discoveredSocials: Record<string, string>;
+}> {
+  const result: {
+    discoveredWhatsapp: string | null;
+    linktreeLinks: Record<string, string>;
+    discoveredSocials: Record<string, string>;
+  } = {
+    discoveredWhatsapp: null,
+    linktreeLinks: {},
+    discoveredSocials: {},
+  };
+
+  try {
+    const { html, isDown } = await fetchHtmlWithTimeout(url, 6000);
+    if (isDown || !html) return result;
+
+    const $ = cheerio.load(html);
+
+    $('a[href]').each((_, el) => {
+      const href = $(el).attr('href') || '';
+      const text = $(el).text().trim() || 'Link';
+
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
+      // Detecta WhatsApp
+      if (href.includes('wa.me/') || href.includes('api.whatsapp.com/')) {
+        const matchDigits = href.match(/\d{10,14}/);
+        if (matchDigits) {
+          result.discoveredWhatsapp = `https://wa.me/${matchDigits[0]}`;
+        }
+        result.linktreeLinks['WhatsApp'] = href;
+      }
+      // Detecta Instagram
+      else if (href.includes('instagram.com/')) {
+        result.discoveredSocials.instagram = href;
+        result.linktreeLinks['Instagram'] = href;
+      }
+      // Detecta Facebook
+      else if (href.includes('facebook.com/')) {
+        result.discoveredSocials.facebook = href;
+        result.linktreeLinks['Facebook'] = href;
+      }
+      // Outros links de interesse comercial
+      else if (href.startsWith('http')) {
+        const key = text.slice(0, 30) || `Link_${Object.keys(result.linktreeLinks).length + 1}`;
+        result.linktreeLinks[key] = href;
+      }
+    });
+
+    return result;
+  } catch {
+    return result;
   }
 }
 
@@ -193,6 +267,7 @@ export async function auditWebsite(
   if (type === 'none') {
     return {
       website_type: 'none',
+      site_status: 'no_site',
       audit_status: 'completed',
       has_ssl: false,
       is_responsive: false,
@@ -201,31 +276,69 @@ export async function auditWebsite(
       has_google_tags: false,
       extracted_emails: [],
       social_links: {},
+      linktree_links: {},
       pagespeed_mobile_score: null,
     };
   }
 
+  // Agregadores sociais ou Linktree
   if (type === 'social_or_linktree') {
+    let discoveredWhatsapp: string | null = null;
+    let linktreeLinks: Record<string, string> = {};
+    const social_links: Record<string, string> = rawWebsite ? { link: rawWebsite } : {};
+
+    const clean = (rawWebsite || '').toLowerCase();
+    const isAggregator = LINKTREE_AGGREGATORS.some((agg) => clean.includes(agg));
+
+    if (isAggregator && rawWebsite) {
+      const unrolled = await unrollLinktree(rawWebsite);
+      discoveredWhatsapp = unrolled.discoveredWhatsapp;
+      linktreeLinks = unrolled.linktreeLinks;
+      Object.assign(social_links, unrolled.discoveredSocials);
+    }
+
     return {
       website_type: 'social_or_linktree',
+      site_status: 'social_only',
       audit_status: 'completed',
       has_ssl: true,
       is_responsive: true,
-      cms_or_stack: 'Social / Bio Link',
+      cms_or_stack: isAggregator ? 'Linktree / Bio Aggregator' : 'Social Media Profile',
       has_meta_pixel: false,
       has_google_tags: false,
       extracted_emails: [],
-      social_links: rawWebsite ? { link: rawWebsite } : {},
+      social_links,
+      linktree_links: linktreeLinks,
       pagespeed_mobile_score: null,
+      discovered_whatsapp: discoveredWhatsapp,
     };
   }
 
-  // custom_domain: executar crawler determinístico
+  // Domínio próprio (custom_domain)
   try {
-    const { html, hasSsl, finalUrl } = await fetchHtmlWithTimeout(rawWebsite!);
+    const { html, hasSsl, finalUrl, isDown } = await fetchHtmlWithTimeout(rawWebsite!);
+
+    // Caso o site esteja fora do ar ou o domínio tenha expirado (DNS fail, timeout)
+    if (isDown || !html) {
+      return {
+        website_type: 'custom_domain',
+        site_status: 'offline_or_expired',
+        audit_status: 'completed',
+        has_ssl: false,
+        is_responsive: false,
+        cms_or_stack: 'Domínio Fora do Ar',
+        has_meta_pixel: false,
+        has_google_tags: false,
+        extracted_emails: [],
+        social_links: {},
+        linktree_links: {},
+        pagespeed_mobile_score: null,
+      };
+    }
+
     const $ = cheerio.load(html);
 
-    // Responsividade: presença de viewport
+    // Responsividade
     const viewportMeta = $('meta[name="viewport"]').attr('content') || '';
     const isResponsive = /width=device-width/i.test(viewportMeta);
 
@@ -270,7 +383,6 @@ export async function auditWebsite(
 
     // Extração de Emails
     const emailMatches = new Set<string>();
-    // mailto links
     $('a[href^="mailto:"]').each((_, el) => {
       const href = $(el).attr('href') || '';
       const email = href.replace(/^mailto:/i, '').split('?')[0].trim().toLowerCase();
@@ -279,7 +391,6 @@ export async function auditWebsite(
       }
     });
 
-    // Regex no texto
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const bodyText = $('body').text();
     const foundRegexEmails = bodyText.match(emailRegex) || [];
@@ -309,7 +420,7 @@ export async function auditWebsite(
       }
     });
 
-    // PageSpeed Mobile Score (opcional assíncrono)
+    // PageSpeed Mobile Score
     let pagespeed_mobile_score: number | null = null;
     if (!options?.skipPageSpeed && (process.env.PAGESPEED_API_KEY || process.env.NODE_ENV !== 'test')) {
       try {
@@ -321,6 +432,7 @@ export async function auditWebsite(
 
     return {
       website_type: 'custom_domain',
+      site_status: 'online',
       audit_status: 'completed',
       has_ssl: hasSsl,
       is_responsive: isResponsive,
@@ -329,12 +441,13 @@ export async function auditWebsite(
       has_google_tags: hasGoogleTags,
       extracted_emails: Array.from(emailMatches).slice(0, 5),
       social_links,
+      linktree_links: {},
       pagespeed_mobile_score,
     };
-  } catch (error) {
-    console.warn(`Website audit failed for ${rawWebsite}:`, error instanceof Error ? error.message : error);
+  } catch {
     return {
       website_type: 'custom_domain',
+      site_status: 'offline_or_expired',
       audit_status: 'failed',
       has_ssl: false,
       is_responsive: false,
@@ -343,6 +456,7 @@ export async function auditWebsite(
       has_google_tags: false,
       extracted_emails: [],
       social_links: {},
+      linktree_links: {},
       pagespeed_mobile_score: null,
     };
   }
@@ -356,7 +470,7 @@ function isValidEmail(email: string): boolean {
 }
 
 /**
- * PageSpeed Insights API (Estratégia Mobile)
+ * PageSpeed Insights API (Mobile)
  */
 export async function fetchPageSpeedScore(targetUrl: string): Promise<number | null> {
   const apiKey = process.env.PAGESPEED_API_KEY || '';
@@ -366,7 +480,7 @@ export async function fetchPageSpeedScore(targetUrl: string): Promise<number | n
   }`;
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
+  const timeoutId = setTimeout(() => controller.abort(), 10000);
 
   try {
     const res = await fetch(endpoint, { signal: controller.signal });

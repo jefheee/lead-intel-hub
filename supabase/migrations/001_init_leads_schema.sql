@@ -1,8 +1,8 @@
 -- ==============================================================================
--- LEAD INTEL HUB - MIGRATION 001: LEADS & SCRAPING JOBS SCHEMA
+-- LEAD INTEL HUB - MIGRATION 001: LEADS & SCRAPING JOBS SCHEMA (V2: GEO & STATUS)
 -- ==============================================================================
 
--- 1. Create Enums (or domain checks)
+-- 1. Create Enums
 DO $$ BEGIN
     CREATE TYPE job_status AS ENUM ('pending', 'running', 'completed', 'failed');
 EXCEPTION
@@ -11,6 +11,12 @@ END $$;
 
 DO $$ BEGIN
     CREATE TYPE website_type_enum AS ENUM ('none', 'social_or_linktree', 'custom_domain');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
+DO $$ BEGIN
+    CREATE TYPE site_status_enum AS ENUM ('online', 'offline_or_expired', 'no_site', 'social_only');
 EXCEPTION
     WHEN duplicate_object THEN null;
 END $$;
@@ -54,9 +60,14 @@ CREATE TABLE IF NOT EXISTS leads (
     rating NUMERIC(2, 1) DEFAULT 0.0,
     reviews_count INT DEFAULT 0,
     raw_website TEXT,
+
+    -- Exact Geographic Coordinates
+    latitude NUMERIC(10, 7),
+    longitude NUMERIC(10, 7),
     
     -- Technical & Qualification audit fields
     website_type website_type_enum NOT NULL DEFAULT 'none',
+    site_status site_status_enum NOT NULL DEFAULT 'no_site',
     audit_status audit_status_enum NOT NULL DEFAULT 'pending',
     has_ssl BOOLEAN DEFAULT false,
     is_responsive BOOLEAN DEFAULT false,
@@ -65,6 +76,7 @@ CREATE TABLE IF NOT EXISTS leads (
     has_google_tags BOOLEAN DEFAULT false,
     extracted_emails TEXT[] DEFAULT '{}',
     social_links JSONB DEFAULT '{}'::jsonb,
+    linktree_links JSONB DEFAULT '{}'::jsonb,
     pagespeed_mobile_score INT,
     
     -- Business opportunity score
@@ -84,7 +96,8 @@ CREATE INDEX IF NOT EXISTS idx_leads_opportunity_score ON leads(opportunity_scor
 CREATE INDEX IF NOT EXISTS idx_leads_crm_stage ON leads(crm_stage);
 CREATE INDEX IF NOT EXISTS idx_leads_job_id ON leads(job_id);
 CREATE INDEX IF NOT EXISTS idx_leads_website_type ON leads(website_type);
-CREATE INDEX IF NOT EXISTS idx_leads_audit_status ON leads(audit_status);
+CREATE INDEX IF NOT EXISTS idx_leads_site_status ON leads(site_status);
+CREATE INDEX IF NOT EXISTS idx_leads_geo ON leads(latitude, longitude);
 
 -- 5. Auto-update trigger for updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
