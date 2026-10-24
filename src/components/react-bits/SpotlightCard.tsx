@@ -48,6 +48,7 @@ export function SpotlightCard({
       {...props}
     >
       <div
+        suppressHydrationWarning
         className="pointer-events-none absolute -inset-px transition-opacity duration-300 z-10"
         style={{
           opacity,

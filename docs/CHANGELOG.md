@@ -1,5 +1,11 @@
 # Changelog - Lead Intel Hub
 
+## [2026-10-24] - Correção de Hydration Mismatch (Extensões de Navegador / Dark Reader)
+- **Blindagem SSR/Hydration:** Adicionado `suppressHydrationWarning` em `<html>` e `<body>` no `src/app/layout.tsx`.
+- **Componentes Blindados:** Adicionado `suppressHydrationWarning` nos elementos dinâmicos de `GridBackground`, `SpotlightCard` e `ShinyText`.
+- **Refatoração de CSS:** Substituído style inline por classe Tailwind arbitrária `[animation-duration:8s]` no ícone `Radar` em `page.tsx`.
+- **Arquivos Afetados:** `src/app/layout.tsx`, `src/components/react-bits/GridBackground.tsx`, `src/components/react-bits/SpotlightCard.tsx`, `src/components/react-bits/ShinyText.tsx`, `src/app/page.tsx`, `docs/CHANGELOG.md`.
+
 ## [2026-10-24] - Blindagem de Segurança do Git e Higienização de Metadados
 - **Arquivos Desrastreados do Git:** `.env.local`, `.cursor/`, `.gemini/` e `tsconfig.tsbuildinfo` removidos do índice (`git rm --cached`) mantendo arquivos locais intactos.
 - **Gitignore Atualizado:** Adicionadas regras estritas para variáveis de ambiente e pastas de agentes de IA.

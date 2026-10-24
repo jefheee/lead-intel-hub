@@ -217,7 +217,7 @@ export default function DashboardPage() {
         {/* Brand Group */}
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.3)]">
-            <Radar className="w-4 h-4 text-zinc-950 animate-spin" style={{ animationDuration: '8s' }} />
+            <Radar className="w-4 h-4 text-zinc-950 animate-spin [animation-duration:8s]" />
           </div>
           <div className="flex items-center gap-2">
             <ShinyText 

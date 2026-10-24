@@ -23,6 +23,7 @@ export function ShinyText({
 
   return (
     <span
+      suppressHydrationWarning
       className={`inline-block bg-clip-text text-transparent bg-no-repeat transition-all ${className}`}
       style={{
         backgroundImage: `linear-gradient(120deg, rgba(255, 255, 255, 0.4) 0%, ${shimmerColor} 50%, rgba(255, 255, 255, 0.4) 100%)`,

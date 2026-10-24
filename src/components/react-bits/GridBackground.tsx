@@ -11,6 +11,7 @@ export function GridBackground({ className = '' }: GridBackgroundProps) {
     <div className={`pointer-events-none absolute inset-0 overflow-hidden ${className}`}>
       {/* Subtle radial glow in the center-top */}
       <div 
+        suppressHydrationWarning
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[400px] opacity-25"
         style={{
           background: 'radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), rgba(245, 158, 11, 0.08) 40%, transparent 70%)',
