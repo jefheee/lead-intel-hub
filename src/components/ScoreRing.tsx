@@ -25,14 +25,14 @@ export function ScoreRing({
       return {
         text: 'text-amber-400',
         stroke: 'stroke-amber-400',
-        glow: 'drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]',
+        glow: '',
       };
     }
     if (val >= 45) {
       return {
         text: 'text-amber-300',
         stroke: 'stroke-amber-500',
-        glow: 'drop-shadow-[0_0_4px_rgba(245,158,11,0.3)]',
+        glow: '',
       };
     }
     return {
@@ -68,7 +68,7 @@ export function ScoreRing({
         />
       </svg>
       {showText && (
-        <span className={`absolute font-mono font-bold text-[10px] tracking-tighter ${config.text}`}>
+        <span className={`absolute font-mono font-semibold text-xs tracking-tighter ${config.text}`}>
           {normalizedScore}
         </span>
       )}

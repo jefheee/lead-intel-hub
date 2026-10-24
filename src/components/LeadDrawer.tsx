@@ -110,11 +110,11 @@ export function LeadDrawer({
             <ScoreRing score={lead.opportunity_score} size={46} strokeWidth={3.8} />
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-amber-400 font-semibold uppercase tracking-wider font-mono">
+                <span className="text-xs text-amber-400 font-medium">
                   {lead.category || 'Empresa Local'}
                 </span>
                 {lead.site_status === 'offline_or_expired' && (
-                  <span className="bg-red-500/15 text-red-300 border border-red-500/30 text-[10px] px-2 py-0.5 rounded-full font-medium">
+                  <span className="bg-red-500/15 text-red-300 border border-red-500/30 text-xs px-2 py-0.5 rounded-full font-medium">
                     Domínio Fora do Ar
                   </span>
                 )}
@@ -166,7 +166,7 @@ export function LeadDrawer({
                   : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
-              <Globe className="w-3.5 h-3.5 text-cyan-400" />
+              <Globe className="w-3.5 h-3.5 text-zinc-400" />
               <span>Raio-X Técnico</span>
             </button>
 
@@ -190,7 +190,7 @@ export function LeadDrawer({
                   : 'text-zinc-400 hover:text-zinc-200'
               }`}
             >
-              <Lightbulb className="w-3.5 h-3.5 text-emerald-400" />
+              <Lightbulb className="w-3.5 h-3.5 text-zinc-400" />
               <span>Playbook Vendas</span>
             </button>
           </div>
@@ -210,9 +210,9 @@ export function LeadDrawer({
               {/* Gatilhos de Oportunidade */}
               <div className="bg-[#0f1219] border border-white/[0.08] rounded-xl p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5 font-mono">
+                  <h3 className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-amber-400" />
-                    Gatilhos de Oportunidade
+                    Gatilhos de oportunidade
                   </h3>
                   <button
                     onClick={handleReAudit}
@@ -238,7 +238,7 @@ export function LeadDrawer({
               {/* Grid Técnico */}
               <div className="grid grid-cols-2 gap-3 text-xs">
                 <div className="bg-[#0f1219] p-3.5 rounded-xl border border-white/[0.08]">
-                  <span className="text-zinc-500 block text-[10px] uppercase font-mono tracking-wider">Website</span>
+                  <span className="text-zinc-400 block text-xs font-mono font-medium">Website</span>
                   {lead.raw_website ? (
                     <a
                       href={lead.raw_website.startsWith('http') ? lead.raw_website : `http://${lead.raw_website}`}
@@ -255,7 +255,7 @@ export function LeadDrawer({
                 </div>
 
                 <div className="bg-[#0f1219] p-3.5 rounded-xl border border-white/[0.08]">
-                  <span className="text-zinc-500 block text-[10px] uppercase font-mono tracking-wider">Status do Site</span>
+                  <span className="text-zinc-400 block text-xs font-mono font-medium">Status do Site</span>
                   <span className="text-zinc-200 font-medium text-xs mt-1 block">
                     {lead.site_status === 'offline_or_expired' && '⚠️ Fora do Ar'}
                     {lead.site_status === 'no_site' && 'Sem Site Cadastrado'}
@@ -265,7 +265,7 @@ export function LeadDrawer({
                 </div>
 
                 <div className="bg-[#0f1219] p-3.5 rounded-xl border border-white/[0.08]">
-                  <span className="text-zinc-500 block text-[10px] uppercase font-mono tracking-wider">Certificado SSL</span>
+                  <span className="text-zinc-400 block text-xs font-mono font-medium">Certificado SSL</span>
                   {lead.has_ssl ? (
                     <span className="text-emerald-400 font-medium text-xs flex items-center gap-1.5 mt-1">
                       <ShieldCheck className="w-4 h-4 text-emerald-400" /> HTTPS Seguro
@@ -278,7 +278,7 @@ export function LeadDrawer({
                 </div>
 
                 <div className="bg-[#0f1219] p-3.5 rounded-xl border border-white/[0.08]">
-                  <span className="text-zinc-500 block text-[10px] uppercase font-mono tracking-wider">Mobile Viewport</span>
+                  <span className="text-zinc-400 block text-xs font-mono font-medium">Mobile Viewport</span>
                   <span className={`font-medium text-xs mt-1 flex items-center gap-1.5 ${lead.is_responsive ? 'text-emerald-400' : 'text-amber-400'}`}>
                     <Smartphone className="w-4 h-4" />
                     {lead.is_responsive ? 'Responsivo' : 'Não Otimizado'}
@@ -286,19 +286,19 @@ export function LeadDrawer({
                 </div>
 
                 <div className="bg-[#0f1219] p-3.5 rounded-xl border border-white/[0.08]">
-                  <span className="text-zinc-500 block text-[10px] uppercase font-mono tracking-wider">CMS / Stack</span>
+                  <span className="text-zinc-400 block text-xs font-mono font-medium">CMS / Stack</span>
                   <span className="text-zinc-200 font-medium text-xs mt-1 block truncate">
                     {lead.cms_or_stack || 'HTML / Custom'}
                   </span>
                 </div>
 
                 <div className="bg-[#0f1219] p-3.5 rounded-xl border border-white/[0.08]">
-                  <span className="text-zinc-500 block text-[10px] uppercase font-mono tracking-wider">Tráfego Pago / Pixels</span>
+                  <span className="text-zinc-400 block text-xs font-mono font-medium">Tráfego Pago / Pixels</span>
                   <div className="flex gap-2 mt-1">
-                    <span className={`px-2 py-0.5 rounded text-[11px] font-mono ${lead.has_meta_pixel ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/30' : 'text-zinc-600'}`}>
+                    <span className={`px-2 py-0.5 rounded text-xs font-mono ${lead.has_meta_pixel ? 'bg-zinc-800 text-zinc-300 border border-zinc-700' : 'text-zinc-600'}`}>
                       Pixel: {lead.has_meta_pixel ? 'Sim' : 'Não'}
                     </span>
-                    <span className={`px-2 py-0.5 rounded text-[11px] font-mono ${lead.has_google_tags ? 'bg-indigo-500/15 text-indigo-300 border border-indigo-500/30' : 'text-zinc-600'}`}>
+                    <span className={`px-2 py-0.5 rounded text-xs font-mono ${lead.has_google_tags ? 'bg-zinc-800 text-zinc-300 border border-zinc-700' : 'text-zinc-600'}`}>
                       GTM: {lead.has_google_tags ? 'Sim' : 'Não'}
                     </span>
                   </div>
@@ -308,8 +308,8 @@ export function LeadDrawer({
               {/* Linktree Unroller */}
               {lead.linktree_links && Object.keys(lead.linktree_links).length > 0 && (
                 <div className="bg-[#0f1219] border border-white/[0.08] rounded-xl p-4 space-y-2">
-                  <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider block font-mono">
-                    Links Desdobrados do Linktree:
+                  <span className="text-zinc-300 text-xs font-semibold block">
+                    Links desdobrados do Linktree:
                   </span>
                   <div className="space-y-1.5">
                     {Object.entries(lead.linktree_links).map(([title, url], idx) => (
@@ -332,14 +332,14 @@ export function LeadDrawer({
 
               {/* Contatos e Redes */}
               <div className="bg-[#0f1219] border border-white/[0.08] rounded-xl p-4 space-y-3">
-                <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider block font-mono">
-                  Contatos e Redes:
+                <span className="text-zinc-300 text-xs font-semibold block">
+                  Contatos e redes:
                 </span>
                 <div className="space-y-2 text-xs">
                   {lead.extracted_emails && lead.extracted_emails.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {lead.extracted_emails.map((e, idx) => (
-                        <span key={idx} className="bg-[#08090d] border border-white/[0.08] px-2.5 py-1 rounded-lg text-zinc-300 font-mono text-[11px] flex items-center gap-1.5">
+                        <span key={idx} className="bg-[#08090d] border border-white/[0.08] px-2.5 py-1 rounded-lg text-zinc-300 font-mono text-xs flex items-center gap-1.5">
                           <Mail className="w-3.5 h-3.5 text-zinc-400" />
                           {e}
                         </span>
@@ -375,13 +375,11 @@ export function LeadDrawer({
                   <div>
                     <div className="flex items-center gap-1.5">
                       <Sparkles className="w-4 h-4 text-amber-400" />
-                      <ShinyText 
-                        text="Abordagem Comercial On-Demand"
-                        className="text-xs font-bold uppercase tracking-wider text-white font-mono"
-                        shimmerColor="rgba(245, 158, 11, 0.9)"
-                      />
+                      <h4 className="text-xs font-semibold text-white">
+                        Abordagem Comercial On-Demand
+                      </h4>
                     </div>
-                    <p className="text-[11px] text-zinc-400 mt-0.5">
+                    <p className="text-xs text-zinc-400 mt-0.5">
                       Gerado com Gemini 2.5 Flash • Contexto determinístico zero-token
                     </p>
                   </div>
@@ -389,7 +387,7 @@ export function LeadDrawer({
                   <button
                     onClick={handleGeneratePitch}
                     disabled={isGeneratingPitch}
-                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-zinc-950 font-semibold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
+                    className="bg-amber-400 hover:bg-amber-300 text-zinc-950 font-semibold px-3 py-1.5 rounded-lg text-xs transition-colors flex items-center gap-1.5 shadow-sm active:scale-95 disabled:opacity-50"
                   >
                     <Sparkles className={`w-3.5 h-3.5 ${isGeneratingPitch ? 'animate-spin' : ''}`} />
                     <span>{isGeneratingPitch ? 'Gerando...' : lead.ai_pitch ? 'Regerar' : 'Gerar Pitch'}</span>
@@ -437,7 +435,7 @@ export function LeadDrawer({
                   <div className="py-12 text-center text-zinc-500 font-sans text-xs">
                     <Sparkles className="w-8 h-8 text-amber-500/30 mx-auto mb-2" />
                     <p className="font-medium text-zinc-300">Nenhuma abordagem gerada ainda.</p>
-                    <p className="text-[11px] text-zinc-500 mt-1">
+                    <p className="text-xs text-zinc-500 mt-1">
                       Clique no botão acima para sintetizar os dados técnicos e gerar uma proposta personalizada.
                     </p>
                   </div>
@@ -450,8 +448,8 @@ export function LeadDrawer({
           {activeTab === 'playbook' && playbook && (
             <div className="space-y-4">
               <div className="bg-[#0f1219] border border-white/[0.08] rounded-xl p-4 space-y-2">
-                <span className="text-emerald-400 text-xs font-semibold uppercase tracking-wider block font-mono">
-                  Gancho de Abertura Recomendado:
+                <span className="text-emerald-400 text-xs font-semibold block">
+                  Gancho de abertura recomendado:
                 </span>
                 <p className="text-xs text-zinc-100 bg-[#08090d] p-3 rounded-lg border border-white/[0.06] font-sans leading-relaxed">
                   &quot;{playbook.immediateHook}&quot;
@@ -459,8 +457,8 @@ export function LeadDrawer({
               </div>
 
               <div className="space-y-3">
-                <span className="text-zinc-400 text-xs font-semibold uppercase tracking-wider block font-mono">
-                  Matriz de Quebra de Objeções:
+                <span className="text-zinc-300 text-xs font-semibold block">
+                  Matriz de quebra de objeções:
                 </span>
 
                 {playbook.objections.map((item, idx) => (
@@ -469,7 +467,7 @@ export function LeadDrawer({
                       <span>🗣️ &quot;{item.objection}&quot;</span>
                       <button
                         onClick={() => handleCopyReply(item.recommendedReply, idx)}
-                        className="text-zinc-400 hover:text-white text-[11px] font-medium flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-md transition-all active:scale-95"
+                        className="text-zinc-400 hover:text-white text-xs font-medium flex items-center gap-1.5 bg-zinc-800 hover:bg-zinc-700 px-2.5 py-1 rounded-md transition-all active:scale-95"
                       >
                         {copiedObjection === idx ? (
                           <>
@@ -485,7 +483,7 @@ export function LeadDrawer({
                       </button>
                     </div>
 
-                    <div className="text-[11px] text-zinc-400 bg-[#08090d] p-2.5 rounded-lg border border-white/[0.04]">
+                    <div className="text-xs text-zinc-400 bg-[#08090d] p-2.5 rounded-lg border border-white/[0.04]">
                       <strong className="text-zinc-300">Contexto:</strong> {item.contextWhy}
                     </div>
 
@@ -502,7 +500,7 @@ export function LeadDrawer({
         {/* Untitled UI Drawer Footer */}
         <div className="p-4 border-t border-white/[0.08] bg-[#090b10] flex items-center justify-between text-xs">
           <div>
-            <span className="text-zinc-500 block text-[10px] font-mono uppercase tracking-wider">Telefone Registrado</span>
+            <span className="text-zinc-400 block text-xs font-mono font-medium">Telefone Registrado</span>
             <span className="text-zinc-100 font-mono font-medium text-xs">{lead.phone || 'Sem telefone'}</span>
           </div>
 

@@ -88,8 +88,8 @@ export function CaptureRadar({
         <div>
           <div className="flex items-center gap-2">
             <div className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
-            <h2 className="text-base font-semibold text-slate-100 uppercase tracking-wider text-xs">
-              Radar Local de Captação
+            <h2 className="text-sm font-semibold text-slate-100">
+              Radar local de captação
             </h2>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
@@ -199,7 +199,7 @@ export function CaptureRadar({
               <p className="font-semibold text-rose-200">Falha ao conectar com o motor de busca</p>
               <p className="mt-0.5 text-slate-300">{errorMsg}</p>
               {!isOnline && (
-                <p className="mt-1.5 font-mono text-[11px] bg-slate-900/80 px-2 py-1 rounded text-slate-400">
+                <p className="mt-1.5 font-mono text-xs bg-slate-900/80 px-2 py-1 rounded text-slate-400">
                   Execute no terminal: docker compose -f C:\Projetos\google-maps-scraper-kit\docker-compose.yml up -d
                 </p>
               )}

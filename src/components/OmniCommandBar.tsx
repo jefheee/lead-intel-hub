@@ -136,12 +136,12 @@ export function OmniCommandBar({
           </div>
         </form>
 
-        {/* Filters and Controls Strip */}
+        {/* Filters and Controls Strip: Toolbar unificada (sem nested cards) */}
         <div className="flex flex-wrap items-center justify-between gap-3 pt-0.5">
-          {/* Target Parameters */}
-          <div className="flex flex-wrap items-center gap-2">
+          {/* Target Parameters Toolbar */}
+          <div className="flex flex-wrap items-center bg-[#08090d] border border-zinc-800/80 rounded-lg divide-x divide-zinc-800/80">
             {/* Nicho Field */}
-            <div className="flex items-center gap-2 bg-[#08090d] border border-zinc-800/80 rounded-lg px-3 py-1.5">
+            <div className="flex items-center gap-2 px-3 py-1.5">
               <Tag className="w-3.5 h-3.5 text-zinc-400" />
               <span className="text-zinc-400 text-xs font-medium">Nicho:</span>
               <input
@@ -154,7 +154,7 @@ export function OmniCommandBar({
             </div>
 
             {/* Target Location Field */}
-            <div className="flex items-center gap-2 bg-[#08090d] border border-zinc-800/80 rounded-lg px-3 py-1.5">
+            <div className="flex items-center gap-2 px-3 py-1.5">
               <MapPin className="w-3.5 h-3.5 text-zinc-400" />
               <span className="text-zinc-400 text-xs font-medium">Local:</span>
               <input
@@ -166,20 +166,8 @@ export function OmniCommandBar({
               />
             </div>
 
-            {/* GPS Button */}
-            <button
-              type="button"
-              onClick={handleUseGps}
-              disabled={isGpsLoading}
-              className="flex items-center gap-1.5 bg-[#08090d] hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors"
-              title="Obter coordenadas GPS atuais"
-            >
-              <Compass className={`w-3.5 h-3.5 text-zinc-400 ${isGpsLoading ? 'animate-spin' : ''}`} />
-              <span>{isGpsLoading ? 'Localizando...' : 'GPS'}</span>
-            </button>
-
             {/* Raio */}
-            <div className="flex items-center gap-2 bg-[#08090d] border border-zinc-800/80 rounded-lg px-3 py-1.5 text-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5 text-xs">
               <span className="text-zinc-400 font-medium">Raio:</span>
               <select
                 value={radiusKm}
@@ -194,8 +182,8 @@ export function OmniCommandBar({
               </select>
             </div>
 
-            {/* Depth Level */}
-            <div className="flex items-center gap-2 bg-[#08090d] border border-zinc-800/80 rounded-lg px-3 py-1.5 text-xs">
+            {/* Profundidade */}
+            <div className="flex items-center gap-2 px-3 py-1.5 text-xs">
               <span className="text-zinc-400 font-medium">Profundidade:</span>
               <select
                 value={depth}
@@ -208,16 +196,30 @@ export function OmniCommandBar({
                 <option value={20} className="bg-[#0c0e14]">Completo (~250 leads)</option>
               </select>
             </div>
+
+            {/* GPS Button */}
+            <div className="px-1.5 py-1">
+              <button
+                type="button"
+                onClick={handleUseGps}
+                disabled={isGpsLoading}
+                className="flex items-center gap-1.5 hover:bg-zinc-800 text-zinc-300 hover:text-white px-2.5 py-1 rounded text-xs font-medium transition-colors"
+                title="Obter coordenadas GPS atuais"
+              >
+                <Compass className={`w-3.5 h-3.5 text-zinc-400 ${isGpsLoading ? 'animate-spin' : ''}`} />
+                <span>{isGpsLoading ? '...' : 'GPS'}</span>
+              </button>
+            </div>
           </div>
 
-          {/* Docker & Demo Actions */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 bg-[#08090d] border border-zinc-800 px-3 py-1.5 rounded-lg text-xs">
+          {/* Docker & Demo Actions Toolbar */}
+          <div className="flex items-center bg-[#08090d] border border-zinc-800/80 rounded-lg divide-x divide-zinc-800/80 text-xs">
+            <div className="flex items-center gap-2 px-3 py-1.5">
               <Server className="w-3.5 h-3.5 text-zinc-400" />
               <span className="text-zinc-400 font-medium">Scraper:</span>
               {checkingHealth ? (
                 <span className="text-amber-300 flex items-center gap-1 font-medium">
-                  <RefreshCw className="w-3 h-3 animate-spin" /> Verificando...
+                  <RefreshCw className="w-3 h-3 animate-spin" /> Verificando
                 </span>
               ) : isDockerOnline ? (
                 <span className="text-emerald-400 font-medium flex items-center gap-1.5">
@@ -240,15 +242,17 @@ export function OmniCommandBar({
               )}
             </div>
 
-            <button
-              type="button"
-              onClick={onSeedDemo}
-              className="bg-[#08090d] hover:bg-zinc-800 border border-zinc-800 text-zinc-300 hover:text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors flex items-center gap-1.5 shadow-sm"
-              title="Carregar leads de teste"
-            >
-              <Database className="w-3.5 h-3.5 text-zinc-400" />
-              <span>Carregar Dados Demo</span>
-            </button>
+            <div className="px-1.5 py-1">
+              <button
+                type="button"
+                onClick={onSeedDemo}
+                className="hover:bg-zinc-800 text-zinc-300 hover:text-white px-2.5 py-1 rounded text-xs font-medium transition-colors flex items-center gap-1.5"
+                title="Carregar leads de teste"
+              >
+                <Database className="w-3.5 h-3.5 text-zinc-400" />
+                <span>Dados Demo</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>

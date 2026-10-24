@@ -1,5 +1,13 @@
 # Changelog - Lead Intel Hub
 
+## [2026-10-24] - Eliminação Completa de Anti-Patterns (LeadDrawer, ScoreRing, Telemetria) e Fix 422 Engine
+- **Engine Scraper 422 Sanada:** Parâmetro `lang` no [scraper-bridge.ts](file:///c:/Projetos/lead-intel-hub/src/services/scraper-bridge.ts#L155) definido estritamente como `'pt'` (código ISO de 2 letras exigido pela API do container Docker `gosom/google-maps-scraper`).
+- **Remoção de Fontes Microscópicas:** Substituídas todas as instâncias de `text-[9px]`, `text-[10px]` e `text-[11px]` por `text-xs` (mínimo de 12px) em [LeadDrawer.tsx](file:///c:/Projetos/lead-intel-hub/src/components/LeadDrawer.tsx), [ScoreRing.tsx](file:///c:/Projetos/lead-intel-hub/src/components/ScoreRing.tsx), [LeadsTable.tsx](file:///c:/Projetos/lead-intel-hub/src/components/LeadsTable.tsx), [MapWrapper.tsx](file:///c:/Projetos/lead-intel-hub/src/components/MapWrapper.tsx) e [CaptureRadar.tsx](file:///c:/Projetos/lead-intel-hub/src/components/CaptureRadar.tsx).
+- **Remoção de All-Caps e Gradient Buttons:** Removidos títulos em caixa alta e gradientes no botão de IA e no cabeçalho de objeções do [LeadDrawer.tsx](file:///c:/Projetos/lead-intel-hub/src/components/LeadDrawer.tsx).
+- **Substituição da AI Color Palette:** Badges de tags e pixels ajustados para tons neutros escuros (`bg-zinc-800 text-zinc-300 border-zinc-700`) com alto contraste legível.
+- **Remoção de Halos e Glows:** Removidos filtros `drop-shadow` de brilho excessivo no [ScoreRing.tsx](file:///c:/Projetos/lead-intel-hub/src/components/ScoreRing.tsx).
+- **Arquivos Afetados:** `src/services/scraper-bridge.ts`, `src/components/LeadDrawer.tsx`, `src/components/ScoreRing.tsx`, `src/components/MapWrapper.tsx`, `src/components/CaptureRadar.tsx`, `docs/CHANGELOG.md`.
+
 ## [2026-10-24] - Eliminação dos 37 Anti-Patterns de Design (Auditoria Impeccable)
 - **Gradient Text Banido:** Substituído título com gradiente por tipografia sólida, nítida e hierárquica em `page.tsx`.
 - **Eliminação de AI Color Palette:** Substituídas cores neon espalhadas por paleta corporativa sóbria (zinc-100 a zinc-400 com acentos semânticos de alta legibilidade).

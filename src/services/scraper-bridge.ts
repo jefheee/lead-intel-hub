@@ -152,7 +152,7 @@ export async function triggerScrapingPipeline(
   const body = {
     name: `lead-intel-${job.id.slice(0, 8)}`,
     keywords: [`${params.query} em ${params.location}`],
-    lang: 'pt-BR',
+    lang: 'pt',
     zoom: params.zoom || 15,
     lat: String(lat),
     lon: String(lon),

@@ -28,7 +28,7 @@ const DynamicInteractiveMap = dynamic(
         </div>
         <div className="text-center">
           <p className="text-xs font-medium text-zinc-300">Carregando Cartografia Tática...</p>
-          <p className="text-[10px] text-zinc-500 font-mono mt-0.5">Renderização Leaflet Dark Mode</p>
+          <p className="text-xs text-zinc-500 font-mono mt-0.5">Renderização Leaflet Dark Mode</p>
         </div>
       </div>
     ),

@@ -265,7 +265,7 @@ export function LeadsTable({
       {/* Untitled UI High-Density Table */}
       <div className="overflow-x-auto flex-1 max-h-[580px] overflow-y-auto">
         <table className="w-full text-left border-collapse text-xs">
-          <thead className="sticky top-0 z-20 bg-[#0c0e14] border-b border-white/[0.08] text-zinc-400 font-sans font-medium text-[11px]">
+          <thead className="sticky top-0 z-20 bg-[#0c0e14] border-b border-white/[0.08] text-zinc-400 font-sans font-medium text-xs">
             <tr>
               <th className="py-2.5 px-3.5 w-14">Score</th>
               <th className="py-2.5 px-3.5">Empresa &amp; Local</th>
@@ -392,12 +392,12 @@ export function LeadsTable({
                         )}
 
                         {lead.has_meta_pixel && (
-                          <span className="px-1.5 py-0.5 rounded-md text-xs font-mono font-medium text-cyan-300 bg-cyan-500/10 border border-cyan-500/20">
+                          <span className="px-1.5 py-0.5 rounded-md text-xs font-mono font-medium text-zinc-300 bg-zinc-800/90 border border-zinc-700">
                             Pixel
                           </span>
                         )}
                         {lead.has_google_tags && (
-                          <span className="px-1.5 py-0.5 rounded-md text-xs font-mono font-medium text-indigo-300 bg-indigo-500/10 border border-indigo-500/20">
+                          <span className="px-1.5 py-0.5 rounded-md text-xs font-mono font-medium text-zinc-300 bg-zinc-800/90 border border-zinc-700">
                             G-Tag
                           </span>
                         )}
