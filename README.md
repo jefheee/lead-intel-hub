@@ -1,4 +1,4 @@
-# 🎯 Lead Intel Hub v2.0 • Command-First & Cartografia Tática
+#  Lead Intel Hub v2.0 • Command-First & Cartografia Tática
 
 Plataforma SaaS local de **Prospecção, Enriquecimento e Auditoria Técnica de Leads B2B**, desenhada segundo os padrões arquiteturais do **Impeccable em modo `Operate` (Zero AI Slop)** e alimentada por motor de extração determinístico na porta `8080`.
 
@@ -33,7 +33,7 @@ Plataforma SaaS local de **Prospecção, Enriquecimento e Auditoria Técnica de 
 
 ---
 
-## ⚡ Como Iniciar
+##  Como Iniciar
 
 ### 1. Iniciar o Servidor de Desenvolvimento
 
