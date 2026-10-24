@@ -4,7 +4,7 @@ Plataforma SaaS local de **Prospecção, Enriquecimento e Auditoria Técnica de 
 
 ---
 
-## 🏛️ Fusão de Arquiteturas & Referências Incorporadas
+##  Fusão de Arquiteturas & Referências Incorporadas
 
 1. **Google Maps Scraper Kit (`C:\Projetos\google-maps-scraper-kit`):**
    - Integração direta com o container Docker `gosom/google-maps-scraper` na porta `8080`.
