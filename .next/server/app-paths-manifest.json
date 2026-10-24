@@ -1,1 +1,5 @@
-{}
+{
+  "/api/leads/route": "app/api/leads/route.js",
+  "/api/scraper/status/route": "app/api/scraper/status/route.js",
+  "/page": "app/page.js"
+}
