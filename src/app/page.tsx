@@ -48,6 +48,9 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const selectedLeadRef = React.useRef<Lead | null>(null);
+  selectedLeadRef.current = selectedLead;
+
   const fetchLeads = useCallback(async () => {
     setLoadingLeads(true);
     try {
@@ -55,8 +58,8 @@ export default function DashboardPage() {
       const data = await res.json();
       if (data.leads) {
         setLeads(data.leads);
-        if (selectedLead) {
-          const fresh = data.leads.find((l: Lead) => l.id === selectedLead.id);
+        if (selectedLeadRef.current) {
+          const fresh = data.leads.find((l: Lead) => l.id === selectedLeadRef.current?.id);
           if (fresh) setSelectedLead(fresh);
         }
       }
@@ -65,7 +68,7 @@ export default function DashboardPage() {
     } finally {
       setLoadingLeads(false);
     }
-  }, [selectedLead]);
+  }, []);
 
   useEffect(() => {
     fetchHealth();
