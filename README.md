@@ -1,55 +1,73 @@
-#  Lead Intel Hub v2.0 • Command-First & Cartografia Tática
+# Lead Intel Hub
 
-Plataforma SaaS local de **Prospecção, Enriquecimento e Auditoria Técnica de Leads B2B**, desenhada segundo os padrões arquiteturais do **Impeccable em modo `Operate` (Zero AI Slop)** e alimentada por motor de extração determinístico na porta `8080`.
+A local B2B prospecting, technical audit, and tactical intelligence workspace built for high-conversion outreach.
 
----
-
-##  Fusão de Arquiteturas & Referências Incorporadas
-
-1. **Google Maps Scraper Kit (`C:\Projetos\google-maps-scraper-kit`):**
-   - Integração direta com o container Docker `gosom/google-maps-scraper` na porta `8080`.
-   - Extração de coordenadas geográficas exatas (`latitude`, `longitude`) de cada estabelecimento.
-2. **Auto-Healing & Auto-Start do Docker Engine (`src/services/docker-manager.ts`):**
-   - Elimina o erro de engine offline: detecta status e dispara automaticamente `docker compose up -d` ou inicialização do Docker Desktop no Windows com polling até `200 OK`.
-3. **LeadRadar (Cartografia & Anel de Score):**
-   - Mapa escuro interativo (`InteractiveMap.tsx`) usando tiles Dark Matter da CartoDB e pinos estilizados por nível de oportunidade (Ouro, Fora do Ar, WhatsApp, Baixa).
-   - Anel de pontuação SVG circular de alta fidelidade (`ScoreRing.tsx`).
-4. **Scout (Linktree & Bio Aggregator Unroller):**
-   - Se o lead cadastrar `linktr.ee`, `bio.link`, `beacons.ai`, o crawler entra na página e desdobra links de WhatsApp direto, Instagram e sites reais ocultos.
-5. **AI Sales Team (Dossiê Executivo & Objeções):**
-   - Dossiê técnico imprimível/PDF (`window.print()`) das vulnerabilidades do site do lead.
-   - Playbook determinístico de quebra de objeções reais (*"Já tenho Instagram"*, *"Meu sobrinho cuida"*, *"Não tenho tempo"*, *"Site é caro"*).
-6. **Aura Campaigns (Live Pipeline Telemetry):**
-   - Console visual com cronômetro e progresso etapa por etapa:
-     - `[1/5]` Auto-cura e inicialização do Docker Engine na porta 8080.
-     - `[2/5]` Geocodificação das coordenadas do perímetro alvo.
-     - `[3/5]` Varredura em tempo real no Google Maps.
-     - `[4/5]` Auditoria Técnica Zero-Token (SSL, Stack, Pixels, Linktree, WhatsApp).
-     - `[5/5]` Cálculo do Opportunity Score e plotagem cartográfica.
-7. **Impeccable Design Standard (Modo Operate):**
-   - Removida a estética de "template genérico de IA" (sem cards soltos desordenados e sem degradês roxos sem função).
-   - Workspace Split-View de alta densidade (Mapa + Lista tática com filtros rápidos em pills, busca instantânea e exportação CSV).
-   - Omni-Command Bar centralizada estilo Raycast/Linear com parser determinístico de linguagem natural.
+Instead of generic contact scraping, Lead Intel Hub pairs Google Maps geo-extraction with automated zero-token technical audits (SSL, modern stack, missing pixels, unrolled link-in-bio aggregators) and calculates an actionable **Opportunity Score** for each business.
 
 ---
 
-##  Como Iniciar
+## Key Features
 
-### 1. Iniciar o Servidor de Desenvolvimento
+- **Tactical Cartography & Split-View:** Interactive dark-mode map powered by Leaflet & CartoDB Dark Matter tiles, plotted alongside a high-density, searchable lead registry.
+- **Automated Google Maps Extraction:** Scrapes local business perimeters with coordinates, contact info, ratings, and operational status.
+- **Docker Auto-Healing:** Automatically verifies, restarts, and polls the local extraction engine container (`localhost:8080`) without manual terminal intervention.
+- **Zero-Token Technical Audits:**
+  - Evaluates website reachability, SSL health, tech stack, and marketing pixel presence.
+  - **Bio Unroller:** Automatically crawls `linktr.ee`, `bio.link`, and `beacons.ai` targets to surface hidden WhatsApp and direct URLs.
+- **Opportunity Scoring (0–100):** Prioritizes leads with the highest conversion potential (e.g., strong Google reviews but broken/missing website or missing analytics).
+- **Executive Dossier & Objection Playbook:** Printable client audit reports (`window.print()`) and built-in sales objection counters ready for immediate outreach.
+- **Live Pipeline Telemetry:** Real-time feedback console showing multi-step job execution times, scraping counts, and geo-perimeter progress.
+
+---
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (App Router, Server Actions)
+- **Language:** TypeScript
+- **UI & Styling:** Tailwind CSS, Lucide Icons, Framer Motion
+- **Maps:** Leaflet & React-Leaflet
+- **Database & Storage:** Supabase (PostgreSQL 17 with Row-Level Security)
+- **AI Integrations:** Google GenAI SDK (`@google/genai`)
+
+---
+
+## Getting Started
+
+### 1. Prerequisites
+
+- **Node.js** 18.17+ or later
+- **Docker Desktop** (running, if using the local scraper engine container)
+
+### 2. Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+
+# Optional (for AI pitch generation)
+GEMINI_API_KEY=your_gemini_api_key
+```
+
+### 3. Installation & Run
 
 ```bash
-cd C:\Projetos\lead-intel-hub
+# Install dependencies
+npm install
+
+# Start development server
 npm run dev
 ```
 
-Abra [http://localhost:3000](http://localhost:3000) no seu navegador.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### 2. Auto-Start do Docker Scraper
+---
 
-Caso o container do scraper (`localhost:8080`) esteja desligado, você pode:
-- Clicar no botão **"Auto-Iniciar"** ao lado do status na barra de comando;
-- Ou iniciar uma varredura normalmente: o sistema fará a auto-cura em background!
+## Workflow Overview
 
-### 3. Teste Imediato com Dados de Demonstração
-
-Clique no botão **"Dados Demo"** na barra de comando para carregar instantaneamente 6 estabelecimentos reais com coordenadas em Palhoça/São José, pinos coloridos no mapa e diagnósticos técnicos completos.
+1. **Trigger Scan:** Enter a business query and target radius in the Omni-Command bar (e.g., *"Clínicas odontológicas em São Paulo"*).
+2. **Auto-Cure & Extract:** The Docker manager ensures the scraping service is running, geocodes the target boundary, and streams records.
+3. **Audit & Score:** The pipeline inspects each business domain, unrolls aggregators, verifies WhatsApp links, and assigns an Opportunity Score.
+4. **Take Action:** Filter by opportunity tiers, open the deep-dive drawer, print an executive dossier, or export results directly to CSV.
